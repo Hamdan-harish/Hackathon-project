@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login — SmartCampus Fix</title>
+
+<style>
+:root{
+  --bg:#0B1220;
+  --panel:#0F172A;
+  --card:#101B33;
+  --border:#1F2A44;
+  --blue:#3B82F6;
+  --blue-dark:#2563EB;
+  --text:#E5E7EB;
+  --muted:#94A3B8;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial;
+  margin:0;
+}
+
+/* Center Box */
+.wrapper{
+  max-width:420px;
+  margin:70px auto;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:18px;
+}
+.title{font-size:20px;font-weight:600;margin-bottom:8px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:10px}
+
+/* Inputs */
+label{font-size:13px;color:#9ca3af}
+input{
+  width:100%;
+  padding:11px;
+  border-radius:12px;
+  border:1px solid #23324e;
+  background:#0A1326;
+  color:white;
+  margin-top:4px;
+  margin-bottom:8px;
+}
+
+/* Button */
+button.primary{
+  width:100%;
+  padding:11px;
+  border-radius:12px;
+  border:none;
+  background:var(--blue);
+  color:white;
+  margin-top:6px;
+}
+button.primary:hover{background:var(--blue-dark)}
+
+.linkRow{margin-top:8px;font-size:13px;color:var(--muted)}
+a{color:#60a5fa;text-decoration:none}
+a:hover{color:white}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="title">Login</div>
+<p class="sub">Access your SmartCampus Fix account</p>
+
+<form id="loginForm">
+  <label>Email</label>
+  <input id="email" type="email" required>
+
+  <label>Password</label>
+  <input id="pass" type="password" required>
+
+  <button class="primary">Login</button>
+</form>
+
+<p id="msg"></p>
+
+<div class="linkRow">
+  Don’t have an account?
+  <a href="signup.html">Create one</a>
+</div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword }
+  from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+const app = initializeApp({
+ apiKey:"AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
+ authDomain:"my-project-ace79.firebaseapp.com",
+ projectId:"my-project-ace79"
+});
+
+const auth = getAuth(app);
+
+const form=document.getElementById("loginForm");
+const msg=document.getElementById("msg");
+
+form.addEventListener("submit",async e=>{
+ e.preventDefault();
+
+ try{
+  await signInWithEmailAndPassword(auth,email.value,pass.value);
+  msg.innerText="Login successful ✔ Redirecting…";
+  window.location.href="complaints.html";
+ }catch(err){
+  msg.innerText="Login failed: "+err.message;
+ }
+});
+</script>
+
+</body>
+</html>
