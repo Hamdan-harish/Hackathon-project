@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Complaints — SmartCampus Fix</title>
+
+<style>
+:root{
+  --bg:#0B1220;--card:#101B33;--border:#1F2A44;
+  --text:#E5E7EB;--muted:#94A3B8;--blue:#2563EB;
+}
+body{background:var(--bg);color:var(--text);
+font-family:Inter,Arial;margin:0}
+
+.nav-right a.active{
+  color:white;font-weight:600;
+  border-bottom:2px solid #3B82F6;padding-bottom:3px;
+}
+
+h2{text-align:center;margin-top:18px}
+
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:16px;margin:12px auto;max-width:850px
+}
+.subtle{color:var(--muted);font-size:13px}
+
+/* TIMELINE */
+.timeline{display:flex;gap:8px;margin-top:8px}
+.step{padding:6px 10px;border-radius:10px;background:#1a2643;color:#9ca3af}
+.active{background:var(--blue);color:white}
+
+.empty{text-align:center;margin-top:30px;color:#9ca3af}
+
+/* NAVBAR */
+.navbar{background:#0A1222;border-bottom:1px solid var(--border);
+padding:14px 22px;display:flex;justify-content:space-between;align-items:center}
+.nav-left{font-size:18px;font-weight:600}
+.nav-right a{color:var(--muted);text-decoration:none;margin-right:14px}
+.nav-right a:hover{color:white}
+.button{background:#3B82F6;padding:8px 12px;border-radius:10px;
+color:white;text-decoration:none}
+
+/* VOTE BAR */
+.vote-bar{
+  display:flex;align-items:center;gap:10px;
+  margin-top:10px;padding:8px 10px;
+  background:#0d162c;border:1px solid #1f2a44;border-radius:12px;
+}
+.vote-btn{
+  background:#142044;border:1px solid #2a3b6a;
+  color:#cbd5f5;border-radius:10px;
+  padding:6px 10px;cursor:pointer;font-size:13px;
+  transition:.2s;
+}
+.vote-btn:hover{background:#1c2d62}
+.vote-btn.active-up{background:#1f6bff;border-color:#3b82f6;color:white}
+.vote-btn.active-down{background:#7c2d2d;border-color:#ef4444;color:white}
+.vote-count{font-size:13px;color:#9fb3ff}
+
+/* DELETE BUTTON */
+.delete-btn{
+  margin-top:12px;
+  background:#ef4444;
+  border:1px solid #b91c1c;
+  color:white;
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.delete-btn:hover{background:#dc2626}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+  <div class="nav-left">SmartCampus Fix</div>
+
+  <div class="nav-right">
+    <a href="index.html">Home</a>
+
+    <a id="navComplaints" href="login.html">Complaints</a>
+    <a id="navAdmin" href="login.html" style="display:none">Admin</a>
+    <a id="navAnalytics" href="login.html" style="display:none">Analytics</a>
+    <a id="navLogin" class="button" href="login.html">Login</a>
+  </div>
+</div>
+
+<h2>My Complaints</h2>
+<div id="list"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getAuth,onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import {
+  getFirestore,collection,query,where,orderBy,
+  onSnapshot,doc,runTransaction,deleteDoc
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+/* CONFIG */
+const app=initializeApp({
+ apiKey:"AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
+ authDomain:"my-project-ace79.firebaseapp.com",
+ projectId:"my-project-ace79"
+});
+
+const auth=getAuth(app);
+const db=getFirestore(app);
+const list=document.getElementById("list");
+
+let currentUser=null;
+onAuthStateChanged(auth,user=>{
+ if(!user) return location.href="login.html";
+ currentUser=user;
+
+ const q=query(
+  collection(db,"complaints"),
+  where("userId","==",user.uid),
+  orderBy("createdAt","desc")
+ );
+
+ onSnapshot(q,snap=>{
+  list.innerHTML="";
+
+  if(snap.empty){
+    list.innerHTML=`<p class="empty">You haven't submitted any complaints yet.</p>`;
+    return;
+  }
+
+  snap.forEach(d=>{
+    const c=d.data() || {};
+    const id=d.id;
+
+    const votes=c.votes || {up:0,down:0};
+    const voters=c.voters || {};
+    const myVote=voters[user.uid] || 0;
+
+    list.innerHTML+=`
+    <div class="card">
+      <h3>${c.title || "Untitled Complaint"}</h3>
+      <p>${c.description || ""}</p>
+      <p class="subtle">${c.location || ""}</p>
+      <p><b>${c.category || "General"}</b> — Priority: ${c.priority || "N/A"}</p>
+
+      <div class="vote-bar">
+        <button class="vote-btn up-btn ${myVote===1?'active-up':''}"
+          onclick="voteOnComplaint('${id}','up',this)">👍 Upvote</button>
+
+        <span class="vote-count up-count">${votes.up} Upvotes</span>
+
+        <button class="vote-btn down-btn ${myVote===-1?'active-down':''}"
+          onclick="voteOnComplaint('${id}','down',this)">👎 Downvote</button>
+
+        <span class="vote-count down-count">${votes.down} Downvotes</span>
+      </div>
+
+      <div class="timeline">
+        <div class="step ${c.status==='submitted'?'active':''}">Submitted</div>
+        <div class="step ${c.status==='in-progress'?'active':''}">In-Progress</div>
+        <div class="step ${c.status==='resolved'?'active':''}">Resolved</div>
+      </div>
+
+      <button class="delete-btn" onclick="deleteComplaint('${id}')">
+        🗑️ Delete Complaint
+      </button>
+    </div>`;
+  });
+ });
+});
+
+/* ----- DELETE COMPLAINT ----- */
+window.deleteComplaint = async(id)=>{
+  if(!confirm("Delete this complaint permanently? This cannot be undone.")) return;
+
+  await deleteDoc(doc(db,"complaints",id));
+
+  alert("Complaint deleted ✔");
+};
+
+/* ----- VOTING LOGIC (unchanged) ----- */
+function applyLocalVote(card, myVote, votes, type){
+  const upBtn   = card.querySelector(".up-btn");
+  const downBtn = card.querySelector(".down-btn");
+  const upText  = card.querySelector(".up-count");
+  const downText= card.querySelector(".down-count");
+
+  upBtn.classList.remove("active-up");
+  downBtn.classList.remove("active-down");
+
+  if(myVote===1) votes.up--;
+  if(myVote===-1) votes.down--;
+
+  let next=myVote;
+  if(type==="up")   next = myVote===1?0:1;
+  if(type==="down") next = myVote===-1?0:-1;
+
+  if(next===1) votes.up++;
+  if(next===-1) votes.down++;
+
+  upText.textContent   = `${votes.up} Upvotes`;
+  downText.textContent = `${votes.down} Downvotes`;
+
+  if(next===1) upBtn.classList.add("active-up");
+  if(next===-1) downBtn.classList.add("active-down");
+
+  return next;
+}
+
+async function voteOnComplaint(id,type,btn){
+  const card=btn.closest(".card");
+
+  const up  = parseInt(card.querySelector(".up-count").textContent);
+  const down= parseInt(card.querySelector(".down-count").textContent);
+
+  let votes={up,down};
+  const prev=btn.dataset.myvote?Number(btn.dataset.myvote):0;
+
+  const next=applyLocalVote(card,prev,votes,type);
+  btn.dataset.myvote=next;
+
+  const ref=doc(db,"complaints",id);
+
+  runTransaction(db,async tx=>{
+    const snap=await tx.get(ref);
+    if(!snap.exists()) return;
+
+    const data=snap.data();
+    const votes=data.votes || {up:0,down:0};
+    const voters=data.voters || {};
+
+    const prevVote=voters[currentUser.uid] || 0;
+
+    if(prevVote===1) votes.up--;
+    if(prevVote===-1) votes.down--;
+
+    if(next===1) votes.up++;
+    if(next===-1) votes.down++;
+
+    if(next===0) delete voters[currentUser.uid];
+    else voters[currentUser.uid]=next;
+
+    tx.update(ref,{votes,voters});
+  }).catch(()=>{
+    alert("Vote failed — restoring");
+    location.reload();
+  });
+}
+
+window.voteOnComplaint=voteOnComplaint;
+</script>
+
+<script type="module" src="scripts/auth-navbar.js"></script>
+</body>
+</html>

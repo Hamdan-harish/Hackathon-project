@@ -5,261 +5,152 @@
 
 <style>
 :root{
-  --bg:#0B1220;
-  --panel:#0F172A;
-  --card:#101B33;
-  --border:#1F2A44;
-  --blue:#3B82F6;
-  --blue-dark:#2563EB;
-  --text:#E5E7EB;
-  --muted:#94A3B8;
+  --bg:#0B1220;--panel:#0F172A;--card:#101B33;--border:#1F2A44;
+  --text:#E5E7EB;--muted:#94A3B8;
 }
+body{background:var(--bg);color:var(--text);font-family:Inter,Arial;margin:0}
 
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:Inter, Arial;
-  margin:0;
-}
-
-/* NAVBAR */
-.navbar{
-  background:#0A1222;
-  border-bottom:1px solid var(--border);
-  padding:14px 22px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-}
-.nav-left{font-size:18px;font-weight:600}
-.nav-right a{
-  color:var(--muted);
-  text-decoration:none;
-  margin-right:14px;
-}
-.nav-right a:hover{color:white}
-.nav-right button{
-  background:var(--blue-dark);
-  border:none;
-  padding:8px 12px;
-  border-radius:9px;
+.nav-right a.active{
   color:white;
+  font-weight:600;
+  border-bottom:2px solid #3B82F6;
+  padding-bottom:3px;
 }
 
-/* LAYOUT */
-.container{
-  max-width:1050px;
-  margin:26px auto 40px;
-  padding:0 14px;
-}
-h3{margin:8px 0}
 
-/* STAT CARDS */
-.grid-3{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-}
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:16px;
-}
-.label{color:var(--muted);font-size:13px}
-.big{font-size:28px;font-weight:700;margin-top:4px}
+.navbar{background:#0A1222;border-bottom:1px solid var(--border);
+padding:14px 22px;display:flex;justify-content:space-between;align-items:center}
+.nav-right a{color:var(--muted);margin-right:14px;text-decoration:none}
+.nav-right a:hover{color:white}
 
-/* SECTION BLOCKS */
-.sectionTitle{margin-top:14px;margin-bottom:6px}
+.container{max-width:1050px;margin:26px auto;padding:0 14px}
+.card{background:var(--card);border:1px solid var(--border);
+border-radius:16px;padding:16px;margin-bottom:12px}
 
-/* CHART PANELS */
-.charts{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-.chartBox{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:16px;
-  height:300px;
-}
-.chartBox canvas{width:100% !important;height:100% !important}
-.note{color:var(--muted);font-size:12px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:800px){.grid-2{grid-template-columns:1fr}}
+.note{color:var(--muted);font-size:13px}
 
-/* Responsive */
-@media(max-width:900px){
-  .grid-3{grid-template-columns:1fr 1fr}
-  .charts{grid-template-columns:1fr}
+/* fixed-height chart wrapper */
+.chart-wrapper{
+  width:100%;height:260px;position:relative;
 }
-@media(max-width:650px){
-  .grid-3{grid-template-columns:1fr}
+.chart-wrapper canvas{
+  width:100% !important;height:100% !important;display:block;
 }
 </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
+<!-- NAVBAR (unchanged UI) -->
 <div class="navbar">
   <div class="nav-left">SmartCampus Fix</div>
 
   <div class="nav-right">
-    <a href="complaints.html">My Complaints</a>
-    <a href="admin.html">Admin</a>
-    <a href="analytics.html">Analytics</a>
-    <a href="lostfound.html">Lost & Found</a>
-    <button id="logoutBtn">Logout</button>
+    <a href="index.html">Home</a>
+    <a id="navComplaints" href="login.html">Complaints</a>
+    <a id="navAdmin" href="login.html" style="display:none">Admin</a>
+    <a id="navAnalytics" href="login.html" style="display:none">Analytics</a>
+    <a id="navLogin" class="button" href="login.html">Login</a>
   </div>
 </div>
+
 
 <div class="container">
+  <h2 id="status">Analytics Dashboard</h2>
+  <p class="note" id="infoMsg">Live analytics — auto updating…</p>
 
-<h3>Analytics Overview</h3>
-<p id="statusMsg" class="note"></p>
+  <div class="grid-2">
+    <div class="card">
+      <span class="note">Status Distribution</span>
+      <div class="chart-wrapper"><canvas id="chartStatus"></canvas></div>
+    </div>
 
-<div class="grid-3" id="overview"></div>
-
-<h3 class="sectionTitle">Status Summary</h3>
-<div class="grid-3" id="statusGrid"></div>
-
-<h3 class="sectionTitle">Category Breakdown</h3>
-<div class="grid-3" id="categoryGrid"></div>
-
-<h3 class="sectionTitle">Priority Breakdown</h3>
-<div class="grid-3" id="priorityGrid"></div>
-
-<h3 class="sectionTitle">Visual Insights</h3>
-
-<div class="charts">
-  <div class="chartBox">
-    <span class="note">Status Distribution</span>
-    <canvas id="statusChart"></canvas>
+    <div class="card">
+      <span class="note">Category Distribution</span>
+      <div class="chart-wrapper"><canvas id="chartCategory"></canvas></div>
+    </div>
   </div>
-  <div class="chartBox">
-    <span class="note">Category Distribution</span>
-    <canvas id="categoryChart"></canvas>
-  </div>
-  <div class="chartBox">
+
+  <div class="card">
     <span class="note">Priority Distribution</span>
-    <canvas id="priorityChart"></canvas>
+    <div class="chart-wrapper"><canvas id="chartPriority"></canvas></div>
   </div>
-</div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<!-- 🔐 HARD admin-only protection (blocks students + logged-out users) -->
+<script type="module" src="scripts/require-admin.js"></script>
+
+<!-- 🔄 Shared navbar (login toggle, no redirect glitches) -->
+<script type="module" src="scripts/auth-navbar.js"></script>
+
+<!-- 📊 Real-time analytics -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getAuth, onAuthStateChanged }
-  from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-import {
-  getFirestore, collection, getDocs
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+import { getFirestore,collection,onSnapshot }
+ from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-const app = initializeApp({
+/* CONFIG */
+const app=initializeApp({
  apiKey:"AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
  authDomain:"my-project-ace79.firebaseapp.com",
  projectId:"my-project-ace79"
 });
+const db=getFirestore(app);
 
-const auth = getAuth(app);
-const db = getFirestore(app);
+const infoMsg=document.getElementById("infoMsg");
 
-const statusMsg=document.getElementById("statusMsg");
-const overview=document.getElementById("overview");
-const statusGrid=document.getElementById("statusGrid");
-const categoryGrid=document.getElementById("categoryGrid");
-const priorityGrid=document.getElementById("priorityGrid");
+let chartStatusObj=null, chartCategoryObj=null, chartPriorityObj=null;
 
-/* Card helper */
-const card=(l,v)=>`
-  <div class="card">
-    <div class="label">${l}</div>
-    <div class="big">${v}</div>
-  </div>`;
-
-/* Auth + load */
-onAuthStateChanged(auth,user=>{
- if(!user){ statusMsg.innerHTML="Please login."; return; }
- loadAnalytics();
-});
-
-async function loadAnalytics(){
- try{
-  statusMsg.innerHTML="Loading…";
-
-  const snap = await getDocs(collection(db,"complaints"));
-
-  let total=0;
-  const status={submitted:0,"in-progress":0,resolved:0};
-  const category={}, priority={};
+/* 🔁 real-time Firestore stream */
+onSnapshot(collection(db,"complaints"), snap=>{
+  let status={submitted:0,"in-progress":0,resolved:0};
+  let category={}, priority={};
 
   snap.forEach(d=>{
-    const c=d.data(); total++;
-    if(c.status) status[c.status]=(status[c.status]||0)+1;
+    const c=d.data()||{};
+    if(c.status)   status[c.status]=(status[c.status]||0)+1;
     if(c.category) category[c.category]=(category[c.category]||0)+1;
     if(c.priority) priority[c.priority]=(priority[c.priority]||0)+1;
   });
 
-  overview.innerHTML =
-    card("Total Complaints", total) +
-    card("Active Issues", status.submitted+status["in-progress"]) +
-    card("Resolved", status.resolved);
-
-  statusGrid.innerHTML =
-    card("Submitted", status.submitted) +
-    card("In-Progress", status["in-progress"]) +
-    card("Resolved", status.resolved);
-
-  categoryGrid.innerHTML = Object.keys(category).map(k=>card(k,category[k])).join("");
-  priorityGrid.innerHTML = Object.keys(priority).map(k=>card(k,priority[k])).join("");
-
   renderCharts(status,category,priority);
-  statusMsg.innerHTML="Analytics updated ✔";
+  infoMsg.innerText="Live analytics — updated automatically ✔";
+});
 
- }catch(e){
-  statusMsg.innerHTML="Error loading analytics: "+e.message;
-  console.error(e);
- }
-}
-
-/* Charts */
+/* 🎨 render / update charts */
 function renderCharts(status,category,priority){
 
- new Chart(statusChart,{
-  type:"pie",
-  data:{
-    labels:["Submitted","In-Progress","Resolved"],
-    datasets:[{data:[
-      status.submitted,
-      status["in-progress"],
-      status.resolved
-    ]}]
-  },
-  options:{responsive:true,maintainAspectRatio:false}
- });
+  const st=[status.submitted||0,status["in-progress"]||0,status.resolved||0];
 
- new Chart(categoryChart,{
-  type:"bar",
-  data:{
-    labels:Object.keys(category),
-    datasets:[{data:Object.values(category)}]
-  },
-  options:{responsive:true,maintainAspectRatio:false}
- });
+  if(!chartStatusObj){
+    chartStatusObj=new Chart(chartStatus,{
+      type:"bar",
+      data:{labels:["Submitted","In-Progress","Resolved"],datasets:[{data:st}]},
+      options:{responsive:true,maintainAspectRatio:false}
+    });
+  } else { chartStatusObj.data.datasets[0].data=st; chartStatusObj.update(); }
 
- new Chart(priorityChart,{
-  type:"bar",
-  data:{
-    labels:Object.keys(priority),
-    datasets:[{data:Object.values(priority)}]
-  },
-  options:{responsive:true,maintainAspectRatio:false}
- });
+  const cl=Object.keys(category), cv=Object.values(category);
+  if(!chartCategoryObj){
+    chartCategoryObj=new Chart(chartCategory,{
+      type:"pie",
+      data:{labels:cl,datasets:[{data:cv}]},
+      options:{responsive:true,maintainAspectRatio:false}
+    });
+  } else { chartCategoryObj.data.labels=cl; chartCategoryObj.data.datasets[0].data=cv; chartCategoryObj.update(); }
+
+  const pl=Object.keys(priority), pv=Object.values(priority);
+  if(!chartPriorityObj){
+    chartPriorityObj=new Chart(chartPriority,{
+      type:"bar",
+      data:{labels:pl,datasets:[{data:pv}]},
+      options:{responsive:true,maintainAspectRatio:false}
+    });
+  } else { chartPriorityObj.data.labels=pl; chartPriorityObj.data.datasets[0].data=pv; chartPriorityObj.update(); }
 }
 </script>
 

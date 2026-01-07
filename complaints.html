@@ -1,122 +1,79 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>My Complaints — SmartCampus Fix</title>
+<title>Public Complaints Feed — SmartCampus Fix</title>
 
 <style>
 :root{
-  --bg:#0B1220;
-  --panel:#0F172A;
-  --card:#0F1B33;
-  --border:#1F2A44;
-  --blue:#3B82F6;
-  --blue-dark:#2563EB;
-  --green:#22C55E;
-  --text:#E5E7EB;
-  --muted:#94A3B8;
+  --bg:#0B1220;--panel:#0F172A;--card:#101B33;
+  --border:#1F2A44;--blue:#3B82F6;--blue-dark:#2563EB;
+  --green:#22C55E;--text:#E5E7EB;--muted:#94A3B8;
 }
 
-/* GLOBAL */
-body{
-  background:linear-gradient(180deg,#0B1220,#060B14);
-  color:var(--text);
-  font-family:Inter,Arial;
-  margin:0;
-  overflow-x:hidden;
-  animation:fadeIn 0.8s ease;
+body{background:var(--bg);color:var(--text);
+font-family:Inter,Arial;margin:0}
+
+/* ACTIVE NAV */
+.nav-right a.active{
+  color:#f8fbff;
+  font-weight:800;
+  background:linear-gradient(135deg,#3194ea,#15a2ff);
+  border-radius:14px;
+  padding:8px 14px;
+  box-shadow:0 0 6px rgba(8,177,255,.55),0 6px 18px rgba(160,210,255,.45);
+  text-shadow:0 0 4px rgba(255,255,255,.65);
+  transform:translateY(-1px);
+  transition:.25s ease;
 }
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* NAVBAR */
-.navbar{
-  background:#0A1222cc;
-  backdrop-filter:blur(6px);
-  border-bottom:1px solid var(--border);
-  padding:14px 22px;
-  display:flex;justify-content:space-between;align-items:center;
-}
+.navbar{background:#0A1222;border-bottom:1px solid var(--border);
+padding:14px 22px;display:flex;justify-content:space-between;align-items:center}
 .nav-left{font-size:18px;font-weight:600}
-.nav-right a{
-  color:var(--muted);
-  margin-right:14px;
-  text-decoration:none;
-  transition:.25s;
-}
+.nav-right a{color:var(--muted);text-decoration:none;margin-right:14px}
 .nav-right a:hover{color:white}
-.nav-right button{
-  background:var(--blue-dark);
-  border:none;border-radius:9px;
-  padding:8px 12px;
-  color:white;
-  cursor:pointer;
-  transition:.25s;
-}
-.nav-right button:hover{transform:translateY(-1px);background:#1d4ed8}
+.button{background:#3B82F6;padding:8px 12px;border-radius:10px;
+color:white;text-decoration:none}
 
-/* LAYOUT */
-.container{max-width:900px;margin:28px auto;padding:0 14px}
-h3{margin:6px 0 10px}
+/* PAGE */
+.container{max-width:900px;margin:24px auto;padding:0 14px}
 
-/* CARD BASE */
-.card{
-  background:#0F162dcc;
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:18px;
-  margin-bottom:16px;
-  box-shadow:0 10px 25px rgba(0,0,0,.18);
-  animation:cardPop .45s ease;
-}
-@keyframes cardPop{from{opacity:0;transform:translateY(8px)}}
+/* BUTTON BAR */
+.topbar{display:flex;justify-content:flex-end;gap:10px;margin-bottom:14px}
+button.action{padding:9px 12px;border:none;border-radius:10px;cursor:pointer;color:white}
+.blue{background:var(--blue)} .blue:hover{background:var(--blue-dark)}
+.gray{background:#1f2937} .gray:hover{background:#374151}
 
-/* ANIMATED INPUTS */
-input,textarea,select{
-  width:100%;
-  padding:12px;
-  background:#0B1328;
-  border:1px solid #23324e;
-  border-radius:12px;
-  color:white;
-  transition:.25s;
-}
-input:focus,textarea:focus,select:focus{
-  outline:none;
-  box-shadow:0 0 0 2px #2563eb66;
-  transform:translateY(-1px);
-}
-textarea{min-height:90px}
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);
+border-radius:16px;padding:18px;margin:0 auto 14px}
 
-/* BUTTON */
-button.primary{
-  background:linear-gradient(90deg,#3B82F6,#2563EB);
-  border:none;border-radius:12px;
-  padding:11px 14px;
-  color:white;
-  cursor:pointer;
-  transition:.25s;
-}
-button.primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
-button.primary:active{transform:scale(.98)}
+/* IMAGE */
+.card img.complaint-img{width:50%;border-radius:12px;margin-top:10px;height: 50%;}
 
-/* TIMELINE TAGS */
-.timeline{display:flex;gap:8px;margin-top:10px}
-.step{
-  padding:6px 10px;border-radius:10px;
-  background:#1b2644;color:#9ca3af;
-  transition:.25s;
-}
-.step.active{background:var(--blue-dark);color:white}
-
-/* COMPLAINT CARDS ANIMATION */
-.complaint{
-  transition:.3s;
-}
-.complaint:hover{
-  transform:translateY(-3px);
-  box-shadow:0 16px 35px rgba(0,0,0,.35);
+/* VOTE BAR */
+.vote-bar{
+  display:flex;align-items:center;gap:10px;
+  margin-top:10px;padding:8px 10px;
+  background:#0d162c;border:1px solid #1f2a44;border-radius:12px;
 }
 
-/* SUBTLE TEXT */
+.vote-btn{
+  background:#142044;border:1px solid #2a3b6a;
+  color:#cbd5f5;border-radius:10px;
+  padding:6px 10px;cursor:pointer;font-size:13px;
+  transition:.2s;
+}
+.vote-btn:hover{background:#1c2d62}
+.vote-btn.active-up{background:#1f6bff;border-color:#3b82f6;color:white}
+.vote-btn.active-down{background:#7c2d2d;border-color:#ef4444;color:white}
+
+.vote-count{font-size:13px;color:#9fb3ff}
+
+/* TIMELINE */
+.timeline{display:flex;gap:8px;margin-top:8px}
+.step{padding:6px 10px;border-radius:10px;background:#1a2643;color:#9ca3af}
+.active{background:var(--blue-dark);color:white}
 .subtle{color:var(--muted);font-size:13px}
 </style>
 </head>
@@ -126,140 +83,209 @@ button.primary:active{transform:scale(.98)}
 <!-- NAVBAR -->
 <div class="navbar">
   <div class="nav-left">SmartCampus Fix</div>
+
   <div class="nav-right">
     <a href="index.html">Home</a>
-    <a href="analytics.html">Analytics</a>
-    <a href="admin.html">Admin</a>
-    <button id="logoutBtn">Logout</button>
+    <a id="navComplaints" href="complaints.html">Complaints</a>
+    <a id="navAdmin" href="login.html" style="display:none">Admin</a>
+    <a id="navAnalytics" href="login.html" style="display:none">Analytics</a>
+    <a id="navLogin" class="button" href="login.html">Login</a>
   </div>
 </div>
 
-
 <div class="container">
 
-<h3>Submit Complaint</h3>
+  <div class="topbar">
+    <button class="action gray"
+      onclick="window.location.href='my-complaints.html'">
+      My Complaints
+    </button>
 
-<div class="card">
-<form id="complaintForm">
+    <button class="action blue"
+      onclick="window.open('register.html','_blank')">
+      Register New Complaint
+    </button>
+  </div>
 
-  <input id="name" placeholder="Your name" required>
-  <input id="title" placeholder="Complaint title" required>
-  <textarea id="desc" placeholder="Describe the problem…" required></textarea>
-  <input id="location" placeholder="Block / Room / Area">
+  <h3>Public Complaints Feed</h3>
 
-  <select id="category" required>
-    <option value="" disabled selected>Select Category</option>
-    <option>Electrical</option><option>Cleaning</option>
-    <option>Network</option><option>Maintenance</option><option>Other</option>
-  </select>
-
-  <select id="priority" required>
-    <option value="" disabled selected>Select Priority</option>
-    <option>Low</option><option>Medium</option><option>High</option>
-  </select>
-
-  <button class="primary">Submit Complaint</button>
-</form>
-
-<p id="msg"></p>
+  <div id="list"></div>
 </div>
-
-
-<h3>My Complaints</h3>
-<div id="list"></div>
-
-</div>
-
 
 <!-- FIREBASE -->
 <script type="module">
-console.log("SCRIPT LOADED");
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getAuth,onAuthStateChanged,signOut }
- from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import {
- getFirestore,collection,addDoc,serverTimestamp,
- query,where,orderBy,onSnapshot
+  getFirestore, collection, query, orderBy,
+  onSnapshot, doc, runTransaction
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+import {
+  getAuth, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
 /* CONFIG */
-const app=initializeApp({
+const app = initializeApp({
  apiKey:"AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
  authDomain:"my-project-ace79.firebaseapp.com",
  projectId:"my-project-ace79"
 });
 
-const auth=getAuth(app);
-const db=getFirestore(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const list = document.getElementById("list");
 
-const form=document.getElementById("complaintForm");
-const msg=document.getElementById("msg");
-const list=document.getElementById("list");
+let currentUser = null;
+onAuthStateChanged(auth,u=>currentUser=u);
 
-/* PROTECT PAGE */
-onAuthStateChanged(auth,user=>{
- if(!user) window.location.href="login.html";
-});
+function applyLocalVote(card, myVote, votes, type){
+  const upBtn   = card.querySelector(".up-btn");
+  const downBtn = card.querySelector(".down-btn");
+  const upText  = card.querySelector(".up-count");
+  const downText= card.querySelector(".down-count");
 
-/* SUBMIT */
-form.addEventListener("submit",async e=>{
- e.preventDefault();
- const u=auth.currentUser;
- if(!u){msg.innerText="Please login first.";return;}
+  // Remove previous visual state
+  upBtn.classList.remove("active-up");
+  downBtn.classList.remove("active-down");
 
- await addDoc(collection(db,"complaints"),{
-  userId:u.uid,
-  name:name.value.trim(),
-  title:title.value.trim(),
-  description:desc.value.trim(),
-  location:location.value.trim(),
-  category:category.value,
-  priority:priority.value,
-  status:"submitted",
-  createdAt:serverTimestamp()
- });
+  // Undo previous count
+  if(myVote === 1)  votes.up--;
+  if(myVote === -1) votes.down--;
 
- msg.innerText="Complaint submitted ✔";
- form.reset();
-});
+  // Apply new state
+  let next = myVote;
 
-/* LOAD COMPLAINTS */
-onAuthStateChanged(auth,user=>{
- if(!user) return;
+  if(type === "up")   next = myVote === 1  ? 0 : 1;
+  if(type === "down") next = myVote === -1 ? 0 : -1;
 
- const q=query(
-  collection(db,"complaints"),
-  where("userId","==",user.uid),
-  orderBy("createdAt","desc")
- );
+  if(next === 1)  votes.up++;
+  if(next === -1) votes.down++;
 
- onSnapshot(q,snap=>{
-  list.innerHTML="";
+  // Update UI immediately
+  upText.textContent   = `${votes.up} Upvotes`;
+  downText.textContent = `${votes.down} Downvotes`;
+
+  if(next === 1)  upBtn.classList.add("active-up");
+  if(next === -1) downBtn.classList.add("active-down");
+
+  return next;
+}
+
+
+/* 🟡 Vote handler */
+async function voteOnComplaint(id, type, btn){
+  if(!currentUser){
+    alert("Login required to vote");
+    return location.href="login.html";
+  }
+
+  const card = btn.closest(".card");
+
+  // read local state
+  const up  = parseInt(card.querySelector(".up-count").textContent);
+  const down= parseInt(card.querySelector(".down-count").textContent);
+
+  let votes = { up, down };
+  const prev = btn.dataset.myvote ? Number(btn.dataset.myvote) : 0;
+
+  // apply instant UI
+  const next = applyLocalVote(card, prev, votes, type);
+
+  // store temp value on element
+  btn.dataset.myvote = next;
+
+  // ---- background Firestore sync ----
+  const ref = doc(db,"complaints",id);
+
+  runTransaction(db, async tx=>{
+    const snap = await tx.get(ref);
+    if(!snap.exists()) return;
+
+    const data = snap.data();
+    const votes = data.votes || {up:0,down:0};
+    const voters = data.voters || {};
+
+    const prevVote = voters[currentUser.uid] || 0;
+
+    if(prevVote === 1)  votes.up--;
+    if(prevVote === -1) votes.down--;
+
+    if(next === 1)  votes.up++;
+    if(next === -1) votes.down++;
+
+    if(next === 0) delete voters[currentUser.uid];
+    else voters[currentUser.uid] = next;
+
+    tx.update(ref,{votes, voters});
+  }).catch(()=>{
+    alert("Vote failed — restoring state");
+    location.reload(); // fallback rollback
+  });
+}
+window.voteOnComplaint = voteOnComplaint;
+
+
+window.voteOnComplaint = voteOnComplaint;   // 👈 IMPORTANT
+
+
+/* LOAD FEED */
+const q = query(collection(db,"complaints"), orderBy("createdAt","desc"));
+
+onSnapshot(q, snap=>{
+  list.innerHTML = "";
+
   snap.forEach(d=>{
-    const c=d.data();
-    list.innerHTML+=`
-    <div class="card complaint">
-      <h3>${c.title}</h3>
-      <p>${c.description}</p>
-      <p class="subtle">${c.location}</p>
-      <p><b>${c.category}</b> — Priority: <b>${c.priority}</b></p>
+    const c = d.data() || {};
+    const id = d.id;
+
+    const votes = c.votes || {up:0,down:0};
+    const voters = c.voters || {};
+    const myVote = currentUser ? (voters[currentUser.uid]||0) : 0;
+
+    const imageHtml = c.image
+      ? `<img src="${c.image}" class="complaint-img">`
+      : "";
+
+    list.innerHTML += `
+    <div class="card">
+
+      <h3>${c.title || "Untitled Complaint"}</h3>
+      <p>${c.description || ""}</p>
+
+      ${imageHtml}
+
+      <p class="subtle">${c.location || ""}</p>
+
+      <p>
+        <b>${c.category || "General"}</b>
+        — Priority: ${c.priority || "N/A"}
+      </p>
+
+      <!-- 👍👎 Vote Bar -->
+      <div class="vote-bar">
+          <button class="vote-btn up-btn"
+            onclick="voteOnComplaint('${id}','up', this)">👍</button>
+
+          <span class="vote-count up-count">${votes.up} Upvotes</span>
+
+          <button class="vote-btn down-btn"
+            onclick="voteOnComplaint('${id}','down', this)">👎</button>
+
+          <span class="vote-count down-count">${votes.down} Downvotes</span>
+
+      </div>
 
       <div class="timeline">
-        <div class="step ${c.status!='submitted'?'active':''}">Submitted</div>
-        <div class="step ${c.status=='in-progress'||c.status=='resolved'?'active':''}">
-          In-Progress
-        </div>
-        <div class="step ${c.status=='resolved'?'active':''}">Resolved</div>
+        <div class="step ${c.status==='submitted'?'active':''}">Submitted</div>
+        <div class="step ${c.status==='in-progress'?'active':''}">In-Progress</div>
+        <div class="step ${c.status==='resolved'?'active':''}">Resolved</div>
       </div>
     </div>`;
   });
- });
 });
-
-/* LOGOUT */
-logoutBtn.onclick=()=>signOut(auth);
 </script>
+
+<!-- Navbar role logic -->
+<script type="module" src="scripts/auth-navbar.js"></script>
 
 </body>
 </html>

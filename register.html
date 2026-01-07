@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Register Complaint — SmartCampus Fix</title>
+
+<style>
+:root{
+  --bg:#0B1220;
+  --card:#101B33;
+  --border:#1F2A44;
+  --blue:#2563EB;
+  --blue-dark:#1d4ed8;
+  --text:#E5E7EB;
+  --muted:#94A3B8;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial;
+  margin:0;
+}
+
+.container{
+  max-width:850px;
+  margin:26px auto;
+  padding:0 14px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px;
+}
+
+label{
+  font-size:13px;
+  color:var(--muted);
+}
+
+input,
+textarea,
+select{
+  width:95%;
+  padding:12px;
+  margin-top:6px;
+  margin-bottom:12px;
+  background:#0A1326;
+  border:1px solid #23324e;
+  border-radius:12px;
+  color:white;
+}
+
+textarea{min-height:90px;}
+
+button{
+  margin-top:6px;
+  padding:10px 14px;
+  border:none;
+  border-radius:12px;
+  background:var(--blue);
+  color:white;
+  cursor:pointer;
+}
+
+button:hover{
+  background:var(--blue-dark);
+}
+
+#msg{
+  margin-top:10px;
+}
+
+.success{color:#4ade80;}
+.error{color:#f87171;}
+
+.preview-box{
+  margin-top:8px;
+  display:none;
+}
+.preview-box img{
+  max-width:220px;
+  border-radius:12px;
+  margin-top:6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Register New Complaint</h2>
+
+  <div class="card">
+    <form id="complaintForm">
+
+      <label>Your Name</label>
+      <input id="name" placeholder="Your Name" required>
+
+      <label>Complaint Title</label>
+      <input id="title" placeholder="Short title" required>
+
+      <label>Description</label>
+      <textarea id="desc" placeholder="Describe the problem…" required></textarea>
+
+      <label>Location</label>
+      <input id="location" placeholder="Block / Room / Area">
+
+      <label>Category</label>
+      <select id="category" required>
+        <option disabled selected value="">Select Category</option>
+        <option>Electrical</option>
+        <option>Cleaning</option>
+        <option>Network</option>
+        <option>Maintenance</option>
+        <option>Other</option>
+      </select>
+
+      <label>Priority</label>
+      <select id="priority" required>
+        <option disabled selected value="">Select Priority</option>
+        <option>Low</option>
+        <option>Medium</option>
+        <option>High</option>
+      </select>
+
+      <!-- 📸 Image Upload + Camera Capture -->
+      <label>Attach Image (optional)</label>
+      <input
+        type="file"
+        id="complaintImage"
+        accept="image/*"
+        capture="environment">
+      
+      <div class="preview-box" id="previewBox">
+        <small>Preview</small>
+        <img id="previewImg">
+      </div>
+
+      <button>Submit Complaint</button>
+    </form>
+
+    <p id="msg"></p>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getAuth,onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import {
+  getFirestore,collection,addDoc,serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+/* 🌐 Firebase Config */
+const app = initializeApp({
+ apiKey:"AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
+ authDomain:"my-project-ace79.firebaseapp.com",
+ projectId:"my-project-ace79"
+});
+
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const form = document.getElementById("complaintForm");
+const msg  = document.getElementById("msg");
+
+/* 👁️ Image preview */
+const imgInput = document.getElementById("complaintImage");
+const previewBox = document.getElementById("previewBox");
+const previewImg = document.getElementById("previewImg");
+
+imgInput.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  previewImg.src = URL.createObjectURL(file);
+  previewBox.style.display = "block";
+});
+
+/* ☁️ Cloudinary Upload */
+async function uploadToCloudinary(file){
+  const cloudName = "dbqhf4icp";
+  const uploadPreset = "smartfix";
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    { method:"POST", body: formData }
+  );
+
+  const data = await res.json();
+  return data.secure_url || null;
+}
+
+/* 🔐 Require Login */
+onAuthStateChanged(auth,user=>{
+  if(!user){
+    msg.className="error";
+    msg.innerText="Redirecting to login…";
+    return setTimeout(()=>location.href="login.html",600);
+  }
+});
+
+/* 📝 Submit Complaint */
+form.addEventListener("submit", async e=>{
+  e.preventDefault();
+
+  const user = auth.currentUser;
+  if(!user){
+    msg.className="error";
+    return msg.innerText="Please login first.";
+  }
+
+const nameInput = document.getElementById("name");
+const titleInput = document.getElementById("title");
+const descInput = document.getElementById("desc");
+
+const nameVal  = nameInput.value.trim();
+const titleVal = titleInput.value.trim();
+const descVal  = descInput.value.trim();
+
+
+  if(!nameVal || !titleVal || !descVal || !category.value || !priority.value){
+    msg.className="error";
+    return msg.innerText="Please complete all required fields.";
+  }
+
+  msg.className="";
+  msg.innerText="Submitting…";
+
+  /* ⬆️ Upload image if provided */
+  let imageUrl = null;
+  const file = imgInput.files[0];
+
+  if(file){
+    try{
+      imageUrl = await uploadToCloudinary(file);
+    }catch(err){
+      console.error(err);
+      msg.innerText="Image upload failed — submitting without image.";
+    }
+  }
+
+  try{
+    await addDoc(collection(db,"complaints"),{
+      userId:user.uid,
+      name:nameVal || "User",
+      title:titleVal,
+      description:descVal,
+      location: document.getElementById("location").value.trim() || "",
+
+      category:category.value,
+      priority:priority.value,
+      status:"submitted",
+      image:imageUrl || null,
+      createdAt:serverTimestamp(),
+      notes:[]
+    });
+
+    msg.className="success";
+    msg.innerText="Complaint submitted successfully ✔";
+    form.reset();
+    previewBox.style.display="none";
+
+  }catch(err){
+    msg.className="error";
+    msg.innerText="Failed to submit: "+err.message;
+  }
+});
+</script>
+</body>
+</html>
