@@ -24,6 +24,7 @@ const navComplaints = document.getElementById("navComplaints");
 const navAdmin      = document.getElementById("navAdmin");
 const navAnalytics  = document.getElementById("navAnalytics");
 
+
 /* --- 🔹 Highlight Current Page --- */
 function highlightActiveNav(){
   const file = location.pathname.split("/").pop() || "index.html";
@@ -36,7 +37,6 @@ function highlightActiveNav(){
     "analytics.html": navAnalytics
   };
 
-  // remove any previous highlights
   [navComplaints, navAdmin, navAnalytics].forEach(el=>{
     if(el) el.classList.remove("active");
   });
@@ -61,10 +61,50 @@ function setLoggedOutUI(){
   highlightActiveNav();
 }
 
+
 /* ---- LOGGED IN ---- */
 async function setLoggedInUI(user){
 
-  // Login → Logout
+  /* 🎯 DEMO ADMIN MODE — forces admin UI */
+  const demoAdmin = sessionStorage.getItem("demoAdmin") === "true";
+
+  if(demoAdmin){
+
+    // force admin navigation
+    if(navComplaints){
+      navComplaints.href = "admin.html";
+      navComplaints.onclick = null;
+    }
+
+    if(navAdmin){
+      navAdmin.style.display="inline-block";
+      navAdmin.href="admin.html";
+      navAdmin.onclick=null;
+    }
+
+    if(navAnalytics){
+      navAnalytics.style.display="inline-block";
+      navAnalytics.href="analytics.html";
+      navAnalytics.onclick=null;
+    }
+
+    // Exit Demo mode button
+    if(navLogin){
+      navLogin.textContent = "Exit Demo";
+      navLogin.href="#";
+      navLogin.onclick = e=>{
+        e.preventDefault();
+        sessionStorage.removeItem("demoAdmin");
+        signOut(auth).then(()=>location.href="index.html");
+      };
+    }
+
+    highlightActiveNav();
+    return; // skip real role logic
+  }
+
+
+  // Normal login → Logout mode
   if(navLogin){
     navLogin.textContent="Logout";
     navLogin.href="#";
@@ -77,10 +117,10 @@ async function setLoggedInUI(user){
   const snap = await getDoc(doc(db,"users",user.uid));
   const role = snap.exists() ? snap.data().role : "student";
 
-  /* 👨‍💼 ADMIN MODE */
+
+  /* 👨‍💼 REAL ADMIN MODE */
   if(role === "admin"){
 
-    // Complaints = Admin Dashboard
     if(navComplaints){
       navComplaints.href = "admin.html";
       navComplaints.onclick = null;
@@ -102,15 +142,14 @@ async function setLoggedInUI(user){
     return;
   }
 
+
   /* 👨‍🎓 STUDENT MODE */
 
-  // Complaints → Public Feed
   if(navComplaints){
     navComplaints.href="complaints.html";
     navComplaints.onclick=null;
   }
 
-  // Show admin links but block (showcase)
   if(navAdmin){
     navAdmin.style.display="inline-block";
     navAdmin.href="#";
@@ -133,6 +172,7 @@ async function setLoggedInUI(user){
 
   highlightActiveNav();
 }
+
 
 onAuthStateChanged(auth,user=>{
   if(!user) return setLoggedOutUI();

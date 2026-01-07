@@ -1,3 +1,9 @@
+// ⭐ Temporary Demo Admin Mode (Hackathon Only)
+if (sessionStorage.getItem("demoAdmin") === "true") {
+  console.log("Demo admin mode — access allowed");
+  window.__demoAdminBypass = true;
+}
+
 import { initializeApp, getApps }
   from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 
@@ -7,7 +13,8 @@ import { getAuth, onAuthStateChanged }
 import { getFirestore, doc, getDoc }
   from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-/* ensure firebase app exists */
+
+/* Ensure Firebase initialized */
 if (!getApps().length) {
   initializeApp({
     apiKey:"AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
@@ -21,15 +28,25 @@ const db   = getFirestore();
 
 const statusMsg = document.getElementById("statusMsg");
 
-/* 🔐 block non-admins */
+
+/* 🔐 Admin Gate */
 onAuthStateChanged(auth, async user => {
 
-  // not logged in → send to login
+  // Not logged in → send to login
   if (!user) {
     location.href = "login.html";
     return;
   }
 
+  // 🎯 Bypass check if Demo Admin Mode enabled
+  if (window.__demoAdminBypass) {
+    if (statusMsg)
+      statusMsg.textContent = "Demo Admin Mode (Temporary)";
+    console.log("Bypass active — skipping role check");
+    return;
+  }
+
+  // Normal role check
   try{
     const snap = await getDoc(doc(db,"users",user.uid));
     const role = snap.exists() ? snap.data().role : "student";

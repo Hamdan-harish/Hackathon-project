@@ -4,42 +4,23 @@
 <title>Login — SmartCampus Fix</title>
 
 <style>
-*{
-  font-family: 'Courier New', Courier, monospace;
-}
+*{font-family:'Courier New',monospace}
 :root{
   --bg:#0B1220;--card:#101B33;--border:#1F2A44;
   --blue:#3B82F6;--blue-dark:#2563EB;
   --text:#E5E7EB;--muted:#94A3B8;
   --green:#22C55E;--red:#EF4444;
 }
+body{background:var(--bg);color:var(--text);margin:0}
 
-body{background:var(--bg);color:var(--text);
-font-family:Inter,Arial;margin:0}
-
-/* CARD */
 .wrapper{
   max-width:420px;margin:70px auto;background:var(--card);
   border:1px solid var(--border);border-radius:18px;padding:18px;
-  position: relative;
-  top: 180px;
+  position:relative;top:180px;
 }
-.title{
-  font-size:40px;
-  font-weight:600;
-  margin-bottom:6px;
-  text-align:center;
+.title{font-size:40px;font-weight:600;text-align:center;margin-bottom:6px}
+.sub{color:var(--muted);font-size:20px;text-align:center;margin-bottom:12px}
 
-
-}
-.sub{
-  color:var(--muted);
-  font-size:20px;
-  margin-bottom:12px;
-  text-align:center;
-}
-
-/* BUTTON */
 button.primary{
   width:100%;padding:11px;border-radius:12px;border:none;
   background:var(--blue);color:white;margin-top:6px;cursor:pointer
@@ -47,13 +28,22 @@ button.primary{
 button.primary:hover{background:var(--blue-dark)}
 button.primary:disabled{opacity:.6;cursor:not-allowed}
 
-/* MESSAGE BOX */
 .msgBox{
   margin-top:12px;padding:10px;border-radius:12px;
   font-size:13px;text-align:center;display:none;
 }
 .msg-success{background:#062e16;border:1px solid #14532d;color:#a7f3d0}
 .msg-error{background:#2a0b0b;border:1px solid #7f1d1d;color:#fecaca}
+
+.demoArea{margin-top:14px;text-align:center;display:none}
+.demoBtn{
+  width:100%;padding:10px 14px;border-radius:10px;
+  border:none;background:#2563eb;color:white;cursor:pointer
+}
+.studentBtn{
+  width:100%;padding:10px 14px;border-radius:10px;
+  border:none;background:#22C55E;color:white;margin-top:8px;cursor:pointer
+}
 </style>
 </head>
 
@@ -65,16 +55,21 @@ button.primary:disabled{opacity:.6;cursor:not-allowed}
 
   <button id="googleBtn" class="primary">Continue with Google</button>
 
-  <!-- status message -->
   <div id="msg" class="msgBox"></div>
-</div>
 
-<!-- DEV — TEMP ROLE SWITCH (remove before demo) -->
-<!-- <div style="margin:12px 0;padding:8px;border:1px dashed #3B82F6;border-radius:10px">
-  <p style="font-size:13px;opacity:.8">DEV TOOLS — Switch Role</p>
-  <button onclick="setRole('student')">Switch to Student</button>
-  <button onclick="setRole('admin')">Switch to Admin</button>
-</div> -->
+  <!-- 🎯 Mode selection AFTER login -->
+  <div id="demoArea" class="demoArea">
+    <button id="studentBtn" class="studentBtn">Continue as Student</button>
+
+    <button id="demoAdminBtn" class="demoBtn">
+      Continue in Demo Admin Mode
+    </button>
+
+    <p style="font-size:12px;color:#9ca3af;margin-top:6px">
+      (Temporary admin access for evaluation only)
+    </p>
+  </div>
+</div>
 
 
 <script type="module">
@@ -99,80 +94,70 @@ const db   = getFirestore(app);
 
 const googleBtn = document.getElementById("googleBtn");
 const msg       = document.getElementById("msg");
+const demoArea  = document.getElementById("demoArea");
+const demoBtn   = document.getElementById("demoAdminBtn");
+const studentBtn= document.getElementById("studentBtn");
 
 const provider = new GoogleAuthProvider();
 const ORG_DOMAIN = "iiitkottayam.ac.in";
 
-/* helper */
+/* UI helper */
 function showMsg(text,type){
-  msg.style.display = "block";
-  msg.className = "msgBox " + (type==="success" ? "msg-success" : "msg-error");
-  msg.innerText = text;
+  msg.style.display="block";
+  msg.className="msgBox "+(type==="success"?"msg-success":"msg-error");
+  msg.innerText=text;
 }
 
-/* redirect by role */
-async function redirectByRole(uid){
-  const snap = await getDoc(doc(db,"users",uid));
-  const role = snap.exists() ? snap.data().role : "student";
-  location.href = role==="admin" ? "admin.html" : "complaints.html";
-}
-
-/* already logged in */
-onAuthStateChanged(auth,user=>{
-  if(user) redirectByRole(user.uid);
-});
-
-/* Google login */
+/* ---------- LOGIN FLOW ---------- */
 googleBtn.onclick = async ()=>{
   showMsg("Opening Google sign-in…","success");
-  googleBtn.disabled = true;
+  googleBtn.disabled=true;
 
   try{
-    const res  = await signInWithPopup(auth, provider);
+    const res  = await signInWithPopup(auth,provider);
     const user = res.user;
-    const email = user.email || "";
+    const email = user.email||"";
     const domain = email.split("@").pop();
 
-    /* block non-organisation users */
     if(domain !== ORG_DOMAIN){
-      showMsg("Login restricted — use your IIIT Kottayam college email ID.","error");
+      showMsg("Login restricted — use your IIIT Kottayam email.","error");
       await signOut(auth);
-      googleBtn.disabled = false;
+      googleBtn.disabled=false;
       return;
     }
 
-    /* create / update user record (default student) */
     await setDoc(doc(db,"users",user.uid),{
-      name:user.displayName || "",
-      email,
-      role:"student"
+      name:user.displayName||"", email, role:"student"
     },{merge:true});
 
-    showMsg("Login successful — redirecting…","success");
-    redirectByRole(user.uid);
+    showMsg("Signed in — choose a mode below.","success");
+    googleBtn.style.display="none";
+    demoArea.style.display="block";
 
-  }catch(err){
+  }catch(e){
     showMsg("Login failed — please try again.","error");
-    googleBtn.disabled = false;
+    googleBtn.disabled=false;
   }
 };
-</script>
 
+/* Stay on page after login */
+onAuthStateChanged(auth,user=>{
+  if(user){
+    googleBtn.style.display="none";
+    demoArea.style.display="block";
+    showMsg("Signed in — choose a mode below.","success");
+  }
+});
 
-<!-- DEV ROLE SWITCH -->
-<script type="module">
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+/* Continue as student */
+studentBtn.onclick = ()=>{
+  location.href="complaints.html";
+};
 
-const auth = getAuth();
-const db = getFirestore();
-
-window.setRole = async role=>{
-  const user = auth.currentUser;
-  if(!user) return alert("Login first");
-
-  await updateDoc(doc(db,"users",user.uid),{role});
-  alert("Role switched to "+role+". Refresh page.");
+/* 🎯 DEMO ADMIN MODE (no role change, just preview) */
+demoBtn.onclick = ()=>{
+  sessionStorage.setItem("demoAdmin","true");
+  location.href="admin.html";
 };
 </script>
 
