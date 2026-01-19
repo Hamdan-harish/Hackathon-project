@@ -1,67 +1,32 @@
-// ⭐ Temporary Demo Admin Mode (Hackathon Only)
-if (sessionStorage.getItem("demoAdmin") === "true") {
-  console.log("Demo admin mode — access allowed");
-  window.__demoAdminBypass = true;
-}
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 
-import { initializeApp, getApps }
-  from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+const app = initializeApp({
+  apiKey: "AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
+  authDomain: "my-project-ace79.firebaseapp.com",
+  projectId: "my-project-ace79"
+});
 
-import { getAuth, onAuthStateChanged }
-  from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+const auth = getAuth(app);
+const REQUIRED_DOMAIN = "iiitkottayam.ac.in"; // 🔐 The Gatekeeper Key
 
-import { getFirestore, doc, getDoc }
-  from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-
-
-/* Ensure Firebase initialized */
-if (!getApps().length) {
-  initializeApp({
-    apiKey:"AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
-    authDomain:"my-project-ace79.firebaseapp.com",
-    projectId:"my-project-ace79"
-  });
-}
-
-const auth = getAuth();
-const db   = getFirestore();
-
-const statusMsg = document.getElementById("statusMsg");
-
-
-/* 🔐 Admin Gate */
-onAuthStateChanged(auth, async user => {
-
-  // Not logged in → send to login
+onAuthStateChanged(auth, (user) => {
   if (!user) {
-    location.href = "login.html";
+    // No user? Go to Login
+    window.location.href = "login.html";
     return;
   }
 
-  // 🎯 Bypass check if Demo Admin Mode enabled
-  if (window.__demoAdminBypass) {
-    if (statusMsg)
-      statusMsg.textContent = "Demo Admin Mode (Temporary)";
-    console.log("Bypass active — skipping role check");
-    return;
-  }
+  const email = user.email || "";
+  const domain = email.split("@").pop();
 
-  // Normal role check
-  try{
-    const snap = await getDoc(doc(db,"users",user.uid));
-    const role = snap.exists() ? snap.data().role : "student";
-
-    if (role !== "admin") {
-      alert("Access denied — Admins only");
-      location.href = "complaints.html";
-      return;
-    }
-
-    if (statusMsg)
-      statusMsg.textContent = "Logged in as Admin ✔";
-
-  } catch(err){
-    console.error("Role check failed",err);
-    location.href = "complaints.html";
+  // 🚨 HACKATHON ADMIN CHECK:
+  // If email matches college domain, we allow access.
+  if (domain !== REQUIRED_DOMAIN) {
+    alert("⛔ Access Denied: You must use an " + REQUIRED_DOMAIN + " email.");
+    window.location.href = "login.html";
+  } else {
+    // Access Granted!
+    console.log("✅ Admin verified by domain");
   }
 });

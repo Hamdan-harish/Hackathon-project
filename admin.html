@@ -1,126 +1,362 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Dashboard — SmartCampus Fix</title>
+    <title>Admin Dashboard — SmartCampus Fix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<style>
-:root{
-  --bg:#0B1220;--panel:#0F172A;--card:#101B33;--border:#1F2A44;
-  --blue:#3B82F6;--blue-dark:#2563EB;
-  --green:#22C55E;--amber:#F59E0B;--red:#EF4444;
-  --text:#E5E7EB;--muted:#94A3B8;
-}
+    <style>
+        :root {
+            /* LIGHT THEME PALETTE */
+            --bg: #F1F5F9;
+            --panel: #FFFFFF;
+            --card: #FFFFFF;
+            --border: #E2E8F0;
+            
+            --primary: #3B82F6;
+            --primary-dark: #2563EB;
+            
+            --text-main: #0F172A;
+            --text-body: #475569;
+            --text-muted: #94A3B8;
+            
+            --success: #10B981;
+            --success-bg: #DCFCE7;
+            --success-text: #166534;
 
-body{background:var(--bg);color:var(--text);font-family:Inter,Arial;margin:0}
+            --amber: #F59E0B;
+            --amber-bg: #FEF3C7;
+            --amber-text: #92400E;
 
-.nav-right a.active{
-  color:white;font-weight:600;border-bottom:2px solid #3B82F6;padding-bottom:3px;
-}
+            --danger: #EF4444;
+            --danger-bg: #FEF2F2;
 
-/* NAVBAR */
-.navbar{background:#0A1222;border-bottom:1px solid var(--border);
-padding:14px 22px;display:flex;justify-content:space-between;align-items:center}
-.nav-right a{color:var(--muted);margin-right:14px;text-decoration:none}
-.nav-right a:hover{color:white}
-.button{background:var(--blue);padding:8px 12px;border-radius:10px;
-color:white;text-decoration:none}
+            --admin-bg: #F8FAFC; 
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
 
-/* LAYOUT */
-.container{max-width:1050px;margin:26px auto;padding:0 14px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;
-padding:16px;margin:0 auto 14px;max-width:850px}
-.subtle{color:var(--muted);font-size:13px}
+        body {
+            background: var(--bg);
+            color: var(--text-body);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            line-height: 1.5;
+        }
 
-/* FILTER BAR */
-.filters{background:var(--panel);border:1px solid var(--border);border-radius:14px;
-padding:12px;display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;max-width:850px;margin-inline:auto}
-select{background:#0A1326;border:1px solid #23324e;padding:8px 10px;color:white;border-radius:10px}
+        /* NAVBAR */
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-/* STATUS TAGS */
-.tag{padding:6px 10px;border-radius:10px;font-size:12px}
-.tag.submitted{background:#1E293B}
-.tag.inp{background:#1E3A8A}
-.tag.resolved{background:#065F46}
+        .brand {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
 
-/* BUTTONS */
-button.small{padding:7px 10px;border:none;border-radius:10px;color:white;cursor:pointer}
-.blue{background:var(--blue)} .blue:hover{background:var(--blue-dark)}
-.green{background:var(--green)} .orange{background:var(--amber)} .red{background:var(--red)}
+        .nav-right a {
+            color: var(--text-body);
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
 
-/* NOTES */
-textarea{width:100%;padding:10px;border-radius:10px;background:#0A1326;
-border:1px solid #23324e;color:white;margin-top:6px}
-.noteItem{background:#0F172A;border:1px solid var(--border);padding:7px 10px;
-border-radius:10px;margin-top:6px;font-size:13px}
+        .nav-right a:not(.button):hover { color: var(--primary); }
 
-/* TIMELINE */
-.timeline{display:flex;gap:8px;margin-top:6px}
-.step{padding:6px 10px;border-radius:10px;background:#1a2643;color:#9ca3af}
-.active{background:var(--blue-dark);color:white}
+        .nav-right a.active {
+            color: var(--primary);
+            background: #EFF6FF;
+            font-weight: 600;
+        }
 
-/* IMAGE */
-.card img.complaint-img{
-  width:50%;
-  border-radius:12px;
-  margin-top:10px;
-}
+        .nav-right .button {
+            background: var(--text-main);
+            color: white !important;
+            padding: 10px 24px;
+            border-radius: 50px;
+        }
 
-/* 📊 ADMIN VOTE SUMMARY */
-.vote-summary{
-  margin-top:10px;
-  padding:8px 10px;
-  background:#0b1428;
-  border:1px solid #1f2a44;
-  border-radius:12px;
-  display:flex;
-  gap:14px;
-  font-size:13px;
-}
-.vote-up{color:#4ade80}
-.vote-down{color:#f87171}
-.vote-score{color:#ffe083}
-</style>
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h2.page-title {
+            color: var(--text-main);
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+
+        /* FILTERS */
+        .filters {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        select:focus { outline: 2px solid var(--primary); border-color: transparent; }
+
+        /* CARD DESIGN */
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden; 
+        }
+
+        /* USER CONTENT AREA */
+        .card-body {
+            padding: 24px;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .chip {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        .chip-cat { background: #EFF6FF; color: var(--primary); }
+        .chip-pri { background: #FFF1F2; color: #E11D48; }
+        
+        /* New style for High Priority to stand out */
+        .chip-pri-high { background: #991B1B; color: #FFF; }
+
+        .card h3 {
+            margin: 8px 0;
+            color: var(--text-main);
+            font-size: 20px;
+        }
+
+        .card p.desc {
+            color: var(--text-body);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .card img.complaint-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            float: right; 
+            margin-left: 16px;
+        }
+
+        /* SCORE BADGE */
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #FFFBEB;
+            color: #B45309;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 16px;
+            border: 1px solid #FCD34D;
+        }
+
+        /* ADMIN PANEL */
+        .admin-panel {
+            background: var(--admin-bg);
+            border-top: 1px solid var(--border);
+            padding: 20px 24px;
+        }
+
+        .panel-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* BUTTONS */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button.small {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-inp { background: var(--amber-bg); color: var(--amber-text); border: 1px solid #FCD34D; }
+        .btn-inp:hover { background: #FDE68A; }
+
+        .btn-res { background: var(--success-bg); color: var(--success-text); border: 1px solid #86EFAC; }
+        .btn-res:hover { background: #BBF7D0; }
+
+        .btn-del { background: white; color: var(--danger); border: 1px solid #FECACA; margin-left: auto; }
+        .btn-del:hover { background: var(--danger-bg); }
+
+        /* NOTES SECTION */
+        .note-input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        textarea {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: 'Inter', sans-serif;
+            height: 40px;
+            resize: none;
+        }
+        textarea:focus { height: 70px; }
+
+        .btn-add {
+            background: var(--text-main);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .note-list {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .note-item {
+            background: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--text-body);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+        .note-item::before {
+            content: "📝 ";
+        }
+
+        /* Status Badge in Card */
+        .status-pill {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .st-sub { color: var(--text-muted); border: 1px solid var(--border); }
+        .st-inp { color: var(--amber-text); background: var(--amber-bg); }
+        .st-res { color: var(--success-text); background: var(--success-bg); }
+
+    </style>
 </head>
 
 <body>
 
 <div class="navbar">
-  <div class="nav-left">SmartCampus Fix</div>
-
-  <div class="nav-right">
-    <a href="index.html">Home</a>
-    <a id="navComplaints" href="login.html">Complaints</a>
-    <a id="navAdmin" href="login.html" style="display:none">Admin</a>
-    <a id="navAnalytics" href="login.html" style="display:none">Analytics</a>
-    <a id="navLogin" class="button" href="login.html">Login</a>
-  </div>
+    <div class="brand">SmartCampus Fix</div>
+    <div class="nav-right">
+        <a href="index.html">Home</a>
+        
+        <a id="navAdmin" class="active" href="admin.html" style="color:var(--primary);">Dashboard</a>
+        
+        <a id="navAnalytics" href="analytics.html" style="display:none">Analytics</a>
+        <a id="navLogin" class="button" href="login.html">Login</a>
+    </div>
 </div>
 
 <div class="container">
 
-<h2>Admin Dashboard</h2>
+    <h2 class="page-title">Admin Dashboard</h2>
 
-<div class="filters">
-  <select id="filterCategory">
-    <option value="all">All Categories</option>
-    <option>Electrical</option><option>Cleaning</option>
-    <option>Network</option><option>Maintenance</option><option>Other</option>
-  </select>
+    <div class="filters">
+        <select id="filterCategory">
+            <option value="all">📁 All Categories</option>
+            <option>Electrical</option><option>Cleaning</option>
+            <option>Network</option><option>Plumbing</option>
+            <option>Maintenance</option><option>Other</option>
+        </select>
 
-  <select id="filterPriority">
-    <option value="all">All Priorities</option>
-    <option>Low</option><option>Medium</option><option>High</option>
-  </select>
+        <select id="filterPriority">
+            <option value="all">⚡ All Priorities</option>
+            <option>Low</option><option>Medium</option><option>High</option>
+        </select>
 
-  <select id="filterStatus">
-    <option value="all">All Status</option>
-    <option value="submitted">Submitted</option>
-    <option value="in-progress">In-Progress</option>
-    <option value="resolved">Resolved</option>
-  </select>
-</div>
+        <select id="filterStatus">
+            <option value="all">📌 All Status</option>
+            <option value="submitted">Submitted</option>
+            <option value="in-progress">In-Progress</option>
+            <option value="resolved">Resolved</option>
+        </select>
+    </div>
 
-<div id="list"></div>
+    <div id="list">
+        <div style="text-align:center; padding:40px; color:#94A3B8;">Loading dashboard data...</div>
+    </div>
+
 </div>
 
 <script type="module" src="scripts/require-admin.js"></script>
@@ -146,7 +382,7 @@ const fCat=document.getElementById("filterCategory");
 const fPri=document.getElementById("filterPriority");
 const fSta=document.getElementById("filterStatus");
 
-/* 📌 Load + Sort by Score (DESC) */
+/* 📌 Load + Sort by SAFETY SCORE (Algorithm) */
 function loadComplaints(){
  const q=query(collection(db,"complaints"),orderBy("createdAt","desc"));
 
@@ -154,83 +390,118 @@ function loadComplaints(){
   const docs=[];
 
   snap.forEach(d=>{
-    const c=d.data() || {};
+   const c=d.data() || {};
 
-    if((fCat.value!=="all" && c.category!==fCat.value) ||
-       (fPri.value!=="all" && c.priority!==fPri.value) ||
-       (fSta.value!=="all" && c.status!==fSta.value)) return;
+   // Client-side filtering
+   if((fCat.value!=="all" && c.category!==fCat.value) ||
+      (fPri.value!=="all" && c.priority!==fPri.value) ||
+      (fSta.value!=="all" && c.status!==fSta.value)) return;
 
-    const votes = c.votes || {up:0,down:0};
-    const score = votes.up - votes.down;
+   // 🧮 1. CALCULATE BASE SCORE (AI Safety)
+   let baseScore = 0;
+   if(c.priority === "High") baseScore = 10;       // Safety Hazard
+   else if(c.priority === "Medium") baseScore = 5; // Functional Issue
+   else baseScore = 2;                             // Low/Cosmetic
 
-    docs.push({id:d.id,data:c,votes,score});
+   // 🗳️ 2. CALCULATE VOTES
+   const votes = c.votes || {up:0,down:0};
+   const voteScore = votes.up - votes.down;
+
+   // 🏆 3. FINAL TOTAL SCORE
+   const finalScore = baseScore + voteScore;
+
+   docs.push({id:d.id, data:c, votes, score: finalScore});
   });
 
+  // Sort by Final Score (High to Low)
   docs.sort((a,b)=> b.score - a.score);
 
   list.innerHTML="";
 
+  if(docs.length === 0) {
+    list.innerHTML = `<div style="text-align:center; padding:40px; color:#94A3B8;">No complaints match filters.</div>`;
+    return;
+  }
+
   docs.forEach(item=>{
-    const c=item.data;
-    const votes=item.votes;
-    const score=item.score;
+   const c=item.data;
+   const score=item.score;
 
-    const notesHtml=(c.notes||[])
-      .slice().reverse()
-      .map(n=>`<div class="noteItem">${n}</div>`).join("");
+   const notesHtml=(c.notes||[])
+     .slice().reverse()
+     .map(n=>`<div class="note-item">${n}</div>`).join("");
 
-    const imageHtml = c.image
-      ? `<img src="${c.image}" class="complaint-img">`
-      : "";
+   const imageHtml = c.image
+     ? `<img src="${c.image}" class="complaint-img">`
+     : "";
+   
+   // Visual styles
+   let statusClass = "st-sub";
+   if(c.status==='in-progress') statusClass = "st-inp";
+   if(c.status==='resolved') statusClass = "st-res";
 
-    list.innerHTML+=`
-    <div class="card">
-      <h3>${c.title||"(no title)"}</h3>
-      <p>${c.description||""}</p>
+   let priorityClass = "chip-pri";
+   if(c.priority === "High") priorityClass = "chip-pri-high";
 
-      ${imageHtml}
+   list.innerHTML+=`
+   <div class="card">
+     
+     <div class="card-body">
+        <div class="meta-row">
+           <div>
+             <span class="chip chip-cat">${c.category||"General"}</span>
+             <span class="chip ${priorityClass}">${c.priority||"Normal"}</span>
+           </div>
+           <div>${c.createdAt ? new Date(c.createdAt.toDate()).toLocaleDateString() : ""}</div>
+        </div>
 
-      <p class="subtle">${c.location||""}</p>
+        ${imageHtml}
+        
+        <h3>
+          ${c.title||"(no title)"} 
+          <span class="status-pill ${statusClass}">${c.status}</span>
+        </h3>
+        
+        <p class="desc">${c.description||""}</p>
+        
+        <div class="location-pin" style="color:var(--text-muted); font-size:13px; margin-bottom:12px;">
+            📍 ${c.location||"No location provided"} &nbsp; • &nbsp; 👤 ${c.name||"Unknown"}
+        </div>
 
-      <p><b>User:</b> ${c.name||"Unknown"}</p>
-      <p><b>Category:</b> ${c.category||"-"} — <b>Priority:</b> ${c.priority||"-"}</p>
+        <div class="score-badge">
+            ⭐ Priority Score: ${score}
+        </div>
+     </div>
 
-      <div class="vote-summary">
-        <span class="vote-up">👍 Upvotes: ${votes.up}</span>
-        <span class="vote-down">👎 Downvotes: ${votes.down}</span>
-        <span class="vote-score">⭐ Score: ${score}</span>
-      </div>
+     <div class="admin-panel">
+        <span class="panel-label">Workflow Actions</span>
+        
+        <div class="btn-group">
+           <button class="small btn-inp" onclick="updateStatus('${item.id}','in-progress')">
+             ⏳ Mark In-Progress
+           </button>
 
-      <div class="timeline">
-        <div class="step active">Submitted</div>
-        <div class="step ${c.status==='in-progress' || c.status==='resolved'?'active':''}">In-Progress</div>
-        <div class="step ${c.status==='resolved'?'active':''}">Resolved</div>
-      </div>
+           <button class="small btn-res" onclick="updateStatus('${item.id}','resolved')">
+             ✅ Mark Resolved
+           </button>
 
-      <p><span class="tag ${
-        c.status==='resolved'?'resolved':
-        c.status==='in-progress'?'inp':'submitted'
-      }">${c.status||'submitted'}</span></p>
+           <button class="small btn-del" onclick="deleteComplaint('${item.id}')">
+             🗑 Delete
+           </button>
+        </div>
 
-      <button class="small orange" onclick="updateStatus('${item.id}','in-progress')">
-        Mark In-Progress
-      </button>
+        <span class="panel-label">Internal Work Notes</span>
+        <div class="note-input-area">
+           <textarea id="note_${item.id}" placeholder="Type updates here..."></textarea>
+           <button class="btn-add" onclick="addNote('${item.id}')">Add</button>
+        </div>
+        
+        <div class="note-list">
+           ${notesHtml}
+        </div>
+     </div>
 
-      <button class="small green" onclick="updateStatus('${item.id}','resolved')">
-        Mark Resolved
-      </button>
-
-      <button class="small red" onclick="deleteComplaint('${item.id}')">
-        🗑 Delete Complaint
-      </button>
-
-      <div class="noteBox">
-        <p><b>Work Notes</b></p>
-        <textarea id="note_${item.id}" placeholder="Add update…"></textarea>
-        <button class="small blue" onclick="addNote('${item.id}')">Add Note</button>
-        ${notesHtml || "<p class='subtle'>No notes yet</p>"}
-      </div>
-    </div>`;
+   </div>`;
   });
  });
 }
@@ -241,7 +512,6 @@ loadComplaints();
 /* 🟢 Update Status */
 window.updateStatus = async(id,status)=>{
  await updateDoc(doc(db,"complaints",id),{status});
- alert("Status updated ✔");
 };
 
 /* 📝 Add Note */
@@ -256,14 +526,12 @@ window.addNote = async(id)=>{
  notes.push(text);
  await updateDoc(ref,{notes});
  box.value="";
- alert("Note added ✔");
 };
 
 /* 🗑 ADMIN DELETE */
 window.deleteComplaint = async(id)=>{
- if(!confirm("Delete this complaint permanently?")) return;
+ if(!confirm("Are you sure? This will permanently delete the record.")) return;
  await deleteDoc(doc(db,"complaints",id));
- alert("Complaint deleted ✔");
 };
 </script>
 

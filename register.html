@@ -1,276 +1,572 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Register Complaint — SmartCampus Fix</title>
+    <title>Register Complaint — SmartCampus Fix</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
-:root{
-  --bg:#0B1220;
-  --card:#101B33;
-  --border:#1F2A44;
-  --blue:#2563EB;
-  --blue-dark:#1d4ed8;
-  --text:#E5E7EB;
-  --muted:#94A3B8;
-}
+    <style>
+        :root {
+            /* LIGHT THEME PALETTE */
+            --bg: #F1F5F9;
+            --card: #FFFFFF;
+            --border: #E2E8F0;
+            --primary: #3B82F6;
+            --primary-dark: #2563EB;
+            --text-main: #0F172A;
+            --text-body: #475569;
+            --text-muted: #94A3B8;
+            --success: #10B981;
+            --danger: #EF4444;
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
 
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:Inter,Arial;
-  margin:0;
-}
+        body {
+            background: var(--bg);
+            color: var(--text-body);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
 
-.container{
-  max-width:850px;
-  margin:26px auto;
-  padding:0 14px;
-}
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:18px;
-}
+        /* HEADER */
+        .header-area {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-label{
-  font-size:13px;
-  color:var(--muted);
-}
+        h2 {
+            color: var(--text-main);
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
 
-input,
-textarea,
-select{
-  width:95%;
-  padding:12px;
-  margin-top:6px;
-  margin-bottom:12px;
-  background:#0A1326;
-  border:1px solid #23324e;
-  border-radius:12px;
-  color:white;
-}
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
 
-textarea{min-height:90px;}
+        /* CARD FORM */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: var(--shadow-lg);
+        }
 
-button{
-  margin-top:6px;
-  padding:10px 14px;
-  border:none;
-  border-radius:12px;
-  background:var(--blue);
-  color:white;
-  cursor:pointer;
-}
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-button:hover{
-  background:var(--blue-dark);
-}
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
 
-#msg{
-  margin-top:10px;
-}
+        /* INPUTS */
+        .input-wrapper {
+            position: relative;
+        }
 
-.success{color:#4ade80;}
-.error{color:#f87171;}
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            padding-right: 50px !important;
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
 
-.preview-box{
-  margin-top:8px;
-  display:none;
-}
-.preview-box img{
-  max-width:220px;
-  border-radius:12px;
-  margin-top:6px;
-}
-</style>
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* 🎤 MICROPHONE BUTTON STYLE */
+        .mic-btn {
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+
+        textarea + .mic-btn {
+            top: auto;
+            bottom: 12px;
+            transform: none;
+        }
+
+        .mic-btn:hover {
+            background: #EFF6FF;
+            color: var(--primary);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        textarea + .mic-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .mic-active {
+            background: #FEE2E2 !important;
+            color: #EF4444 !important;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* FILE UPLOAD STYLING */
+        .file-upload-wrapper {
+            position: relative;
+            background: #F8FAFC;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .file-upload-wrapper:hover {
+            border-color: var(--primary);
+            background: #EFF6FF;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* PREVIEW */
+        .preview-box {
+            margin-top: 16px;
+            display: none;
+            padding: 8px;
+            background: #F1F5F9;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .preview-box img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* BUTTONS */
+        button.submit-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.2s;
+        }
+
+        button.submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* MESSAGES */
+        #msg {
+            margin-top: 16px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .success {
+            background: #DCFCE7;
+            color: #166534;
+            display: block !important;
+        }
+
+        .error {
+            background: #FEE2E2;
+            color: #991B1B;
+            display: block !important;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h2>Register New Complaint</h2>
+    <div class="container">
 
-  <div class="card">
-    <form id="complaintForm">
+        <div class="header-area">
+            <h2>New Complaint</h2>
+            <div class="subtitle">Fill out the form below to report a campus issue.</div>
+        </div>
 
-      <label>Your Name</label>
-      <input id="name" placeholder="Your Name" required>
+        <div class="card">
+            <form id="complaintForm">
 
-      <label>Complaint Title</label>
-      <input id="title" placeholder="Short title" required>
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <div class="input-wrapper">
+                        <input id="name" type="text" placeholder="e.g. John Doe" required>
+                        <button type="button" id="micName" class="mic-btn" title="Speak Name">🎤</button>
+                    </div>
+                </div>
 
-      <label>Description</label>
-      <textarea id="desc" placeholder="Describe the problem…" required></textarea>
+                <div class="form-group">
+                    <label>Complaint Title</label>
+                    <div class="input-wrapper">
+                        <input id="title" type="text" placeholder="Short summary of the issue" required>
+                        <button type="button" id="micTitle" class="mic-btn" title="Speak Title">🎤</button>
+                    </div>
+                </div>
 
-      <label>Location</label>
-      <input id="location" placeholder="Block / Room / Area">
+                <div class="form-group">
+                    <label>Location</label>
+                    <div class="input-wrapper">
+                        <input id="location" type="text" placeholder="Block / Room No / Area">
+                        <button type="button" id="micLocation" class="mic-btn" title="Speak Location">🎤</button>
+                    </div>
+                </div>
 
-      <label>Category</label>
-      <select id="category" required>
-        <option disabled selected value="">Select Category</option>
-        <option>Electrical</option>
-        <option>Cleaning</option>
-        <option>Network</option>
-        <option>Maintenance</option>
-        <option>Other</option>
-      </select>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="category" required>
+                        <option disabled selected value="">Select...</option>
+                        <option>Electrical</option>
+                        <option>Cleaning</option>
+                        <option>Network</option>
+                        <option>Plumbing</option>
+                        <option>Maintenance</option>
+                        <option>Other</option>
+                    </select>
+                </div>
 
-      <label>Priority</label>
-      <select id="priority" required>
-        <option disabled selected value="">Select Priority</option>
-        <option>Low</option>
-        <option>Medium</option>
-        <option>High</option>
-      </select>
+                <div class="form-group">
+                    <label>Description</label>
+                    <div class="input-wrapper">
+                        <textarea id="desc" placeholder="Please describe the details of the problem..." required></textarea>
+                        <button type="button" id="micDesc" class="mic-btn" title="Speak Description">🎤</button>
+                    </div>
+                </div>
 
-      <!-- 📸 Image Upload + Camera Capture -->
-      <label>Attach Image (optional)</label>
-      <input
-        type="file"
-        id="complaintImage"
-        accept="image/*"
-        capture="environment">
-      
-      <div class="preview-box" id="previewBox">
-        <small>Preview</small>
-        <img id="previewImg">
-      </div>
+                <div class="form-group">
+                    <label>Attach Photo (Optional)</label>
+                    <div class="file-upload-wrapper">
+                        <span class="upload-icon">📷</span>
+                        <span style="font-size:14px; color:var(--text-muted)">Tap to take photo or upload image</span>
+                        <input type="file" id="complaintImage" accept="image/*" capture="environment">
+                    </div>
 
-      <button>Submit Complaint</button>
-    </form>
+                    <div class="preview-box" id="previewBox">
+                        <img id="previewImg">
+                    </div>
+                </div>
 
-    <p id="msg"></p>
-  </div>
-</div>
+                <button class="submit-btn">Submit Complaint</button>
+            </form>
+
+            <div id="msg"></div>
+        </div>
+    </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getAuth,onAuthStateChanged }
-  from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-import {
-  getFirestore,collection,addDoc,serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-/* 🌐 Firebase Config */
-const app = initializeApp({
- apiKey:"AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
- authDomain:"my-project-ace79.firebaseapp.com",
- projectId:"my-project-ace79"
-});
-
-const auth = getAuth(app);
-const db   = getFirestore(app);
-
-const form = document.getElementById("complaintForm");
-const msg  = document.getElementById("msg");
-
-/* 👁️ Image preview */
-const imgInput = document.getElementById("complaintImage");
-const previewBox = document.getElementById("previewBox");
-const previewImg = document.getElementById("previewImg");
-
-imgInput.addEventListener("change", e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  previewImg.src = URL.createObjectURL(file);
-  previewBox.style.display = "block";
-});
-
-/* ☁️ Cloudinary Upload */
-async function uploadToCloudinary(file){
-  const cloudName = "dbqhf4icp";
-  const uploadPreset = "smartfix";
-
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", uploadPreset);
-
-  const res = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-    { method:"POST", body: formData }
-  );
-
-  const data = await res.json();
-  return data.secure_url || null;
-}
-
-/* 🔐 Require Login */
-onAuthStateChanged(auth,user=>{
-  if(!user){
-    msg.className="error";
-    msg.innerText="Redirecting to login…";
-    return setTimeout(()=>location.href="login.html",600);
-  }
-});
-
-/* 📝 Submit Complaint */
-form.addEventListener("submit", async e=>{
-  e.preventDefault();
-
-  const user = auth.currentUser;
-  if(!user){
-    msg.className="error";
-    return msg.innerText="Please login first.";
-  }
-
-const nameInput = document.getElementById("name");
-const titleInput = document.getElementById("title");
-const descInput = document.getElementById("desc");
-
-const nameVal  = nameInput.value.trim();
-const titleVal = titleInput.value.trim();
-const descVal  = descInput.value.trim();
-
-
-  if(!nameVal || !titleVal || !descVal || !category.value || !priority.value){
-    msg.className="error";
-    return msg.innerText="Please complete all required fields.";
-  }
-
-  msg.className="";
-  msg.innerText="Submitting…";
-
-  /* ⬆️ Upload image if provided */
-  let imageUrl = null;
-  const file = imgInput.files[0];
-
-  if(file){
-    try{
-      imageUrl = await uploadToCloudinary(file);
-    }catch(err){
-      console.error(err);
-      msg.innerText="Image upload failed — submitting without image.";
-    }
-  }
-
-  try{
-    await addDoc(collection(db,"complaints"),{
-      userId:user.uid,
-      name:nameVal || "User",
-      title:titleVal,
-      description:descVal,
-      location: document.getElementById("location").value.trim() || "",
-
-      category:category.value,
-      priority:priority.value,
-      status:"submitted",
-      image:imageUrl || null,
-      createdAt:serverTimestamp(),
-      notes:[]
+    /* 🌐 Firebase Config */
+    const app = initializeApp({
+        apiKey: "AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
+        authDomain: "my-project-ace79.firebaseapp.com",
+        projectId: "my-project-ace79"
     });
 
-    msg.className="success";
-    msg.innerText="Complaint submitted successfully ✔";
-    form.reset();
-    previewBox.style.display="none";
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  }catch(err){
-    msg.className="error";
-    msg.innerText="Failed to submit: "+err.message;
-  }
-});
+    /* 🤖 GEMINI AI CONFIG */
+    const GEMINI_API_KEY = "AIzaSyCqW_PNbyy7ry7frwackfJ42krFxolKro8"; 
+
+    const form = document.getElementById("complaintForm");
+    const msg = document.getElementById("msg");
+    const imgInput = document.getElementById("complaintImage");
+    const previewBox = document.getElementById("previewBox");
+    const previewImg = document.getElementById("previewImg");
+
+    /* 👁️ Image preview */
+    imgInput.addEventListener("change", e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        previewImg.src = URL.createObjectURL(file);
+        previewBox.style.display = "block";
+    });
+
+    /* ☁️ Cloudinary Upload */
+    async function uploadToCloudinary(file) {
+        const cloudName = "dbqhf4icp";
+        const uploadPreset = "smartfix";
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
+
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+        return data.secure_url || null;
+    }
+
+    /* 🎤 REUSABLE VOICE RECOGNITION SETUP */
+    function setupVoiceInput(btnId, inputId) {
+        const btn = document.getElementById(btnId);
+        const input = document.getElementById(inputId);
+
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            if (btn) btn.style.display = "none";
+            return;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        btn.addEventListener("click", () => {
+            if (btn.classList.contains("mic-active")) {
+                recognition.stop();
+            } else {
+                document.querySelectorAll(".mic-btn").forEach(b => b.classList.remove("mic-active"));
+                recognition.start();
+            }
+        });
+
+        recognition.onstart = () => {
+            btn.classList.add("mic-active");
+        };
+
+        recognition.onend = () => {
+            btn.classList.remove("mic-active");
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            const current = input.value;
+            input.value = current ? current + " " + transcript : transcript;
+        };
+    }
+
+    // Setup Voice for fields
+    setupVoiceInput("micName", "name");
+    setupVoiceInput("micTitle", "title");
+    setupVoiceInput("micLocation", "location");
+    setupVoiceInput("micDesc", "desc");
+
+
+    /* 🧠 SMART MODEL SWITCHER (Tries user's requested model first) */
+    async function analyzePriority(title, desc, category) {
+        
+        // 🚀 LIST OF MODELS TO TRY (Starting with your request)
+        const models = [
+            "gemini-3-flash-preview",  // 1. Your request
+            "gemini-2.0-flash-exp",    // 2. Latest experimental
+            "gemini-1.5-flash",        // 3. Standard stable
+            "gemini-1.5-flash-latest", // 4. Latest alias
+            "gemini-pro"               // 5. Fallback
+        ];
+
+        const prompt = `
+            Act as a facility manager.
+            Complaint: ${category} - ${title} - ${desc}
+            Tasks:
+            1. If spam/nonsense, return "Spam".
+            2. Else assign Priority (High/Medium/Low).
+            Return ONLY one word: "High", "Medium", "Low", or "Spam".
+        `;
+
+        // Loop through models until one works
+        for (const model of models) {
+            console.log(`🤖 Trying AI Model: ${model}...`);
+            try {
+                // Construct URL dynamically
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+                
+                const response = await fetch(url, {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.candidates && data.candidates.length > 0) {
+                        let result = data.candidates[0].content.parts[0].text.trim();
+                        // Success! We found a working model.
+                        console.log(`✅ Success with ${model}`);
+                        
+                        if(result.includes("Spam")) return "Spam";
+                        if(result.includes("High")) return "High";
+                        if(result.includes("Medium")) return "Medium";
+                        if(result.includes("Low")) return "Low";
+                        
+                        return "Medium"; 
+                    }
+                } else {
+                    console.warn(`❌ ${model} failed (${response.status}). Trying next...`);
+                }
+            } catch (e) {
+                console.warn(`❌ ${model} network error. Trying next...`);
+            }
+        }
+        throw new Error("All AI models failed. Please verify API Key & Project permissions.");
+    }
+
+    /* 🔐 Auth Check */
+    onAuthStateChanged(auth, user => {
+        if (!user) {
+            msg.className = "msg error";
+            msg.innerText = "Redirecting to login…";
+            setTimeout(() => location.href = "login.html", 600);
+        }
+    });
+
+    /* 📝 Submit Handler */
+    form.addEventListener("submit", async e => {
+        e.preventDefault();
+        const user = auth.currentUser;
+        if (!user) {
+            msg.className = "msg error";
+            return msg.innerText = "Please login first.";
+        }
+
+        const nameVal = document.getElementById("name").value.trim();
+        const titleVal = document.getElementById("title").value.trim();
+        const descVal = document.getElementById("desc").value.trim();
+        const categoryVal = document.getElementById("category").value;
+        const locationVal = document.getElementById("location").value.trim();
+
+        if (!nameVal || !titleVal || !descVal || !categoryVal) {
+            msg.className = "msg error";
+            return msg.innerText = "Please complete all required fields.";
+        }
+
+        // Show loading state
+        msg.style.display = "block";
+        msg.className = "msg";
+        msg.style.background = "#EFF6FF";
+        msg.style.color = "#3B82F6";
+        msg.innerHTML = "<b>🤖 AI is analyzing severity...</b>";
+
+        try {
+            // 1. Call Smart AI Switcher
+            const aiResult = await analyzePriority(titleVal, descVal, categoryVal);
+
+            if (aiResult === "Spam") {
+                msg.className = "msg error";
+                msg.innerHTML = "⚠️ <b>SPAM DETECTED</b><br>AI rejected this request.";
+                return;
+            }
+
+            // 2. Upload Image
+            let imageUrl = null;
+            if (imgInput.files[0]) {
+                imageUrl = await uploadToCloudinary(imgInput.files[0]);
+            }
+
+            // 3. Save to Firestore
+            await addDoc(collection(db, "complaints"), {
+                userId: user.uid,
+                name: nameVal,
+                title: titleVal,
+                description: descVal,
+                location: locationVal,
+                category: categoryVal,
+                priority: aiResult,
+                status: "submitted",
+                image: imageUrl,
+                createdAt: serverTimestamp(),
+                notes: [],
+                votes: { up: 0, down: 0 },
+                voters: {}
+            });
+
+            // Success
+            msg.className = "msg success";
+            msg.innerText = `Complaint submitted! (AI set priority to ${aiResult})`;
+            form.reset();
+            previewBox.style.display = "none";
+
+            setTimeout(() => window.location.href = "complaints.html", 2000);
+
+        } catch (err) {
+            console.error(err);
+            msg.className = "msg error";
+            msg.innerText = "Error: " + err.message;
+            alert("SYSTEM ERROR:\n" + err.message);
+        }
+    });
 </script>
 </body>
 </html>

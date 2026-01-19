@@ -2,47 +2,157 @@
 <html>
 <head>
 <title>Login — SmartCampus Fix</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{font-family:'Courier New',monospace}
-:root{
-  --bg:#0B1220;--card:#101B33;--border:#1F2A44;
-  --blue:#3B82F6;--blue-dark:#2563EB;
-  --text:#E5E7EB;--muted:#94A3B8;
-  --green:#22C55E;--red:#EF4444;
-}
-body{background:var(--bg);color:var(--text);margin:0}
+:root {
+  /* LIGHT THEME PALETTE */
+  --bg: #F8FAFC;
+  --card: #FFFFFF;
+  --border: #E2E8F0;
+  
+  --primary: #3B82F6;
+  --primary-dark: #2563EB;
+  
+  --text-main: #1E293B;
+  --text-muted: #64748B;
+  
+  --success-bg: #DCFCE7;
+  --success-text: #166534;
+  
+  --error-bg: #FEE2E2;
+  --error-text: #991B1B;
 
-.wrapper{
-  max-width:420px;margin:70px auto;background:var(--card);
-  border:1px solid var(--border);border-radius:18px;padding:18px;
-  position:relative;top:180px;
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
-.title{font-size:40px;font-weight:600;text-align:center;margin-bottom:6px}
-.sub{color:var(--muted);font-size:20px;text-align:center;margin-bottom:12px}
 
-button.primary{
-  width:100%;padding:11px;border-radius:12px;border:none;
-  background:var(--blue);color:white;margin-top:6px;cursor:pointer
+body {
+  background: var(--bg);
+  color: var(--text-main);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
-button.primary:hover{background:var(--blue-dark)}
-button.primary:disabled{opacity:.6;cursor:not-allowed}
 
-.msgBox{
-  margin-top:12px;padding:10px;border-radius:12px;
-  font-size:13px;text-align:center;display:none;
+.wrapper {
+  width: 100%;
+  max-width: 400px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
 }
-.msg-success{background:#062e16;border:1px solid #14532d;color:#a7f3d0}
-.msg-error{background:#2a0b0b;border:1px solid #7f1d1d;color:#fecaca}
 
-.demoArea{margin-top:14px;text-align:center;display:none}
-.demoBtn{
-  width:100%;padding:10px 14px;border-radius:10px;
-  border:none;background:#2563eb;color:white;cursor:pointer
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
 }
-.studentBtn{
-  width:100%;padding:10px 14px;border-radius:10px;
-  border:none;background:#22C55E;color:white;margin-top:8px;cursor:pointer
+
+.sub {
+  color: var(--text-muted);
+  font-size: 15px;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+/* BUTTONS */
+button {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+button.primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.25);
+}
+
+button.primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+button.primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ROLE SELECTION AREA */
+.role-area {
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  display: none; /* Hidden by default */
+  animation: fadeIn 0.4s ease;
+}
+
+.role-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-student {
+  background: #ECFDF5;
+  color: #047857;
+  border: 1px solid #10B981;
+}
+.btn-student:hover { background: #D1FAE5; }
+
+.btn-admin {
+  background: #1E293B;
+  color: white;
+  border: 1px solid #0F172A;
+}
+.btn-admin:hover { background: #334155; }
+
+/* ALERTS */
+.msgBox {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  display: none;
+}
+
+.msg-success {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid #bbf7d0;
+}
+
+.msg-error {
+  background: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid #fecaca;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -51,23 +161,26 @@ button.primary:disabled{opacity:.6;cursor:not-allowed}
 
 <div class="wrapper">
   <div class="title">Campus Login</div>
-  <p class="sub">Sign in using your IIIT Kottayam Google account</p>
+  <p class="sub">Sign in using your IIIT Kottayam Google account to access services.</p>
 
-  <button id="googleBtn" class="primary">Continue with Google</button>
+  <button id="googleBtn" class="primary">
+    Sign in with Google
+  </button>
 
   <div id="msg" class="msgBox"></div>
 
-  <!-- 🎯 Mode selection AFTER login -->
-  <div id="demoArea" class="demoArea">
-    <button id="studentBtn" class="studentBtn">Continue as Student</button>
-
-    <button id="demoAdminBtn" class="demoBtn">
-      Continue in Demo Admin Mode
+  <div id="roleArea" class="role-area">
+    <p style="margin: 0 0 16px 0; font-size: 14px; color: var(--text-main); font-weight: 600;">
+      ✅ Verified! Select Dashboard:
+    </p>
+    
+    <button id="studentBtn" class="role-btn btn-student">
+      🎓 Continue as Student
     </button>
 
-    <p style="font-size:12px;color:#9ca3af;margin-top:6px">
-      (Temporary admin access for evaluation only)
-    </p>
+    <button id="adminBtn" class="role-btn btn-admin">
+      ⚙️ Continue as Admin
+    </button>
   </div>
 </div>
 
@@ -79,7 +192,7 @@ import {
   onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, setDoc
+  getFirestore, doc, setDoc
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 /* CONFIG */
@@ -94,8 +207,8 @@ const db   = getFirestore(app);
 
 const googleBtn = document.getElementById("googleBtn");
 const msg       = document.getElementById("msg");
-const demoArea  = document.getElementById("demoArea");
-const demoBtn   = document.getElementById("demoAdminBtn");
+const roleArea  = document.getElementById("roleArea");
+const adminBtn  = document.getElementById("adminBtn");
 const studentBtn= document.getElementById("studentBtn");
 
 const provider = new GoogleAuthProvider();
@@ -105,7 +218,26 @@ const ORG_DOMAIN = "iiitkottayam.ac.in";
 function showMsg(text,type){
   msg.style.display="block";
   msg.className="msgBox "+(type==="success"?"msg-success":"msg-error");
-  msg.innerText=text;
+  msg.innerHTML = text;
+}
+
+/* 🔒 VALIDATE DOMAIN FUNCTION */
+async function validateUser(user) {
+    if (!user.email) return false;
+    
+    const domain = user.email.split("@").pop();
+    
+    // 🛑 STRICT CHECK
+    if(domain !== ORG_DOMAIN){
+      showMsg(`⛔ <b>Access Denied</b><br>You must use an @${ORG_DOMAIN} email.`, "error");
+      await signOut(auth); // Kick them out immediately
+      googleBtn.style.display = "block";
+      googleBtn.disabled = false;
+      roleArea.style.display = "none";
+      return false;
+    }
+    
+    return true;
 }
 
 /* ---------- LOGIN FLOW ---------- */
@@ -116,47 +248,58 @@ googleBtn.onclick = async ()=>{
   try{
     const res  = await signInWithPopup(auth,provider);
     const user = res.user;
-    const email = user.email||"";
-    const domain = email.split("@").pop();
 
-    if(domain !== ORG_DOMAIN){
-      showMsg("Login restricted — use your IIIT Kottayam email.","error");
-      await signOut(auth);
-      googleBtn.disabled=false;
-      return;
-    }
+    // Check Domain immediately
+    const isValid = await validateUser(user);
+    if (!isValid) return;
 
+    // Save Basic User Info
     await setDoc(doc(db,"users",user.uid),{
-      name:user.displayName||"", email, role:"student"
+      name: user.displayName || "", 
+      email: user.email, 
+      lastLogin: new Date()
     },{merge:true});
 
-    showMsg("Signed in — choose a mode below.","success");
+    // Show Success & Options
+    showMsg(`Signed in as <b>${user.email}</b>`, "success");
     googleBtn.style.display="none";
-    demoArea.style.display="block";
+    roleArea.style.display="block";
 
   }catch(e){
+    console.error(e);
     showMsg("Login failed — please try again.","error");
     googleBtn.disabled=false;
   }
 };
 
-/* Stay on page after login */
-onAuthStateChanged(auth,user=>{
+/* 🔄 PERSISTENCE CHECK (Handle Page Refresh) */
+onAuthStateChanged(auth, async user => {
   if(user){
-    googleBtn.style.display="none";
-    demoArea.style.display="block";
-    showMsg("Signed in — choose a mode below.","success");
+    // HIDE login button while checking
+    googleBtn.style.display="none"; 
+    
+    // Check Domain again on refresh (Security)
+    const isValid = await validateUser(user);
+    
+    if (isValid) {
+        showMsg(`Welcome back, <b>${user.displayName}</b>`, "success");
+        roleArea.style.display="block";
+    }
+  } else {
+    // No user logged in
+    googleBtn.style.display="block";
+    roleArea.style.display="none";
   }
 });
 
-/* Continue as student */
+/* NAVIGATION HANDLERS */
 studentBtn.onclick = ()=>{
   location.href="complaints.html";
 };
 
-/* 🎯 DEMO ADMIN MODE (no role change, just preview) */
-demoBtn.onclick = ()=>{
-  sessionStorage.setItem("demoAdmin","true");
+adminBtn.onclick = ()=>{
+  // In a real app, you might check admin status here too
+  // For hackathon, just let valid domain users click it
   location.href="admin.html";
 };
 </script>
