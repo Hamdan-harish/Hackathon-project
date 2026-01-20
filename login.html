@@ -1,306 +1,296 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Login — SmartCampus Fix</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Login — SmartCampus Fix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
-:root {
-  /* LIGHT THEME PALETTE */
-  --bg: #F8FAFC;
-  --card: #FFFFFF;
-  --border: #E2E8F0;
-  
-  --primary: #3B82F6;
-  --primary-dark: #2563EB;
-  
-  --text-main: #1E293B;
-  --text-muted: #64748B;
-  
-  --success-bg: #DCFCE7;
-  --success-text: #166534;
-  
-  --error-bg: #FEE2E2;
-  --error-text: #991B1B;
+    <style>
+        :root {
+            /* Theme Variables */
+            --bg: #F8FAFC;
+            --card: #FFFFFF;
+            --border: #E2E8F0;
+            
+            --primary: #3B82F6;
+            --primary-dark: #2563EB;
+            
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            
+            --success-bg: #DCFCE7;
+            --success-text: #166534;
+            
+            --error-bg: #FEE2E2;
+            --error-text: #991B1B;
 
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
 
-body {
-  background: var(--bg);
-  color: var(--text-main);
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-.wrapper {
-  width: 100%;
-  max-width: 400px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 32px;
-  box-shadow: var(--shadow-lg);
-  text-align: center;
-}
+        .wrapper {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
 
-.title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-main);
-  margin-bottom: 8px;
-  letter-spacing: -0.5px;
-}
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
 
-.sub {
-  color: var(--text-muted);
-  font-size: 15px;
-  margin-bottom: 32px;
-  line-height: 1.5;
-}
+        .sub {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
 
-/* BUTTONS */
-button {
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 15px;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
+        /* Buttons */
+        button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
 
-button.primary {
-  width: 100%;
-  padding: 14px;
-  border-radius: 10px;
-  border: none;
-  background: var(--primary);
-  color: white;
-  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.25);
-}
+        button.primary {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.25);
+        }
 
-button.primary:hover {
-  background: var(--primary-dark);
-  transform: translateY(-1px);
-}
+        button.primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
 
-button.primary:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-}
+        button.primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
 
-/* ROLE SELECTION AREA */
-.role-area {
-  margin-top: 24px;
-  border-top: 1px solid var(--border);
-  padding-top: 24px;
-  display: none; /* Hidden by default */
-  animation: fadeIn 0.4s ease;
-}
+        /* Role Selection */
+        .role-area {
+            margin-top: 24px;
+            border-top: 1px solid var(--border);
+            padding-top: 24px;
+            display: none; 
+            animation: fadeIn 0.4s ease;
+        }
 
-.role-btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
+        .role-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
-.btn-student {
-  background: #ECFDF5;
-  color: #047857;
-  border: 1px solid #10B981;
-}
-.btn-student:hover { background: #D1FAE5; }
+        .btn-student {
+            background: #ECFDF5;
+            color: #047857;
+            border: 1px solid #10B981;
+        }
+        .btn-student:hover { background: #D1FAE5; }
 
-.btn-admin {
-  background: #1E293B;
-  color: white;
-  border: 1px solid #0F172A;
-}
-.btn-admin:hover { background: #334155; }
+        .btn-admin {
+            background: #1E293B;
+            color: white;
+            border: 1px solid #0F172A;
+        }
+        .btn-admin:hover { background: #334155; }
 
-/* ALERTS */
-.msgBox {
-  margin-top: 20px;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  display: none;
-}
+        /* Status Messages */
+        .msgBox {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+        }
 
-.msg-success {
-  background: var(--success-bg);
-  color: var(--success-text);
-  border: 1px solid #bbf7d0;
-}
+        .msg-success {
+            background: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid #bbf7d0;
+        }
 
-.msg-error {
-  background: var(--error-bg);
-  color: var(--error-text);
-  border: 1px solid #fecaca;
-}
+        .msg-error {
+            background: var(--error-bg);
+            color: var(--error-text);
+            border: 1px solid #fecaca;
+        }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-</style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="wrapper">
-  <div class="title">Campus Login</div>
-  <p class="sub">Sign in using your IIIT Kottayam Google account to access services.</p>
+    <div class="title">Campus Login</div>
+    <p class="sub">Sign in using your IIIT Kottayam Google account to access services.</p>
 
-  <button id="googleBtn" class="primary">
-    Sign in with Google
-  </button>
-
-  <div id="msg" class="msgBox"></div>
-
-  <div id="roleArea" class="role-area">
-    <p style="margin: 0 0 16px 0; font-size: 14px; color: var(--text-main); font-weight: 600;">
-      ✅ Verified! Select Dashboard:
-    </p>
-    
-    <button id="studentBtn" class="role-btn btn-student">
-      🎓 Continue as Student
+    <button id="googleBtn" class="primary">
+        Sign in with Google
     </button>
 
-    <button id="adminBtn" class="role-btn btn-admin">
-      ⚙️ Continue as Admin
-    </button>
-  </div>
+    <div id="msg" class="msgBox"></div>
+
+    <div id="roleArea" class="role-area">
+        <p style="margin: 0 0 16px 0; font-size: 14px; color: var(--text-main); font-weight: 600;">
+            Verified! Select Dashboard:
+        </p>
+        
+        <button id="studentBtn" class="role-btn btn-student">
+            Continue as Student
+        </button>
+
+        <button id="adminBtn" class="role-btn btn-admin">
+            Continue as Admin
+        </button>
+    </div>
 </div>
 
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup,
-  onAuthStateChanged, signOut
+    getAuth, GoogleAuthProvider, signInWithPopup,
+    onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import {
-  getFirestore, doc, setDoc
+    getFirestore, doc, setDoc
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-/* CONFIG */
 const app = initializeApp({
- apiKey:"AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
- authDomain:"my-project-ace79.firebaseapp.com",
- projectId:"my-project-ace79"
+    apiKey:"AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
+    authDomain:"my-project-ace79.firebaseapp.com",
+    projectId:"my-project-ace79"
 });
 
 const auth = getAuth(app);
-const db   = getFirestore(app);
+const db = getFirestore(app);
 
 const googleBtn = document.getElementById("googleBtn");
-const msg       = document.getElementById("msg");
-const roleArea  = document.getElementById("roleArea");
-const adminBtn  = document.getElementById("adminBtn");
-const studentBtn= document.getElementById("studentBtn");
+const msg = document.getElementById("msg");
+const roleArea = document.getElementById("roleArea");
+const adminBtn = document.getElementById("adminBtn");
+const studentBtn = document.getElementById("studentBtn");
 
 const provider = new GoogleAuthProvider();
 const ORG_DOMAIN = "iiitkottayam.ac.in";
 
-/* UI helper */
-function showMsg(text,type){
-  msg.style.display="block";
-  msg.className="msgBox "+(type==="success"?"msg-success":"msg-error");
-  msg.innerHTML = text;
+function showMsg(text, type) {
+    msg.style.display = "block";
+    msg.className = "msgBox " + (type === "success" ? "msg-success" : "msg-error");
+    msg.innerHTML = text;
 }
 
-/* 🔒 VALIDATE DOMAIN FUNCTION */
+// Validate email domain policy
 async function validateUser(user) {
     if (!user.email) return false;
     
     const domain = user.email.split("@").pop();
     
-    // 🛑 STRICT CHECK
-    if(domain !== ORG_DOMAIN){
-      showMsg(`⛔ <b>Access Denied</b><br>You must use an @${ORG_DOMAIN} email.`, "error");
-      await signOut(auth); // Kick them out immediately
-      googleBtn.style.display = "block";
-      googleBtn.disabled = false;
-      roleArea.style.display = "none";
-      return false;
+    if (domain !== ORG_DOMAIN) {
+        showMsg(`<b>Access Denied</b><br>You must use an @${ORG_DOMAIN} email.`, "error");
+        await signOut(auth);
+        
+        googleBtn.style.display = "block";
+        googleBtn.disabled = false;
+        roleArea.style.display = "none";
+        return false;
     }
     
     return true;
 }
 
-/* ---------- LOGIN FLOW ---------- */
-googleBtn.onclick = async ()=>{
-  showMsg("Opening Google sign-in…","success");
-  googleBtn.disabled=true;
+// Handle Login
+googleBtn.onclick = async () => {
+    showMsg("Opening Google sign-in...", "success");
+    googleBtn.disabled = true;
 
-  try{
-    const res  = await signInWithPopup(auth,provider);
-    const user = res.user;
+    try {
+        const res = await signInWithPopup(auth, provider);
+        const user = res.user;
 
-    // Check Domain immediately
-    const isValid = await validateUser(user);
-    if (!isValid) return;
+        const isValid = await validateUser(user);
+        if (!isValid) return;
 
-    // Save Basic User Info
-    await setDoc(doc(db,"users",user.uid),{
-      name: user.displayName || "", 
-      email: user.email, 
-      lastLogin: new Date()
-    },{merge:true});
+        // Update user record
+        await setDoc(doc(db, "users", user.uid), {
+            name: user.displayName || "", 
+            email: user.email, 
+            lastLogin: new Date()
+        }, { merge: true });
 
-    // Show Success & Options
-    showMsg(`Signed in as <b>${user.email}</b>`, "success");
-    googleBtn.style.display="none";
-    roleArea.style.display="block";
+        showMsg(`Signed in as <b>${user.email}</b>`, "success");
+        googleBtn.style.display = "none";
+        roleArea.style.display = "block";
 
-  }catch(e){
-    console.error(e);
-    showMsg("Login failed — please try again.","error");
-    googleBtn.disabled=false;
-  }
+    } catch (e) {
+        console.error(e);
+        showMsg("Login failed. Please try again.", "error");
+        googleBtn.disabled = false;
+    }
 };
 
-/* 🔄 PERSISTENCE CHECK (Handle Page Refresh) */
+// Check auth state on page load
 onAuthStateChanged(auth, async user => {
-  if(user){
-    // HIDE login button while checking
-    googleBtn.style.display="none"; 
-    
-    // Check Domain again on refresh (Security)
-    const isValid = await validateUser(user);
-    
-    if (isValid) {
-        showMsg(`Welcome back, <b>${user.displayName}</b>`, "success");
-        roleArea.style.display="block";
+    if (user) {
+        googleBtn.style.display = "none"; 
+        
+        const isValid = await validateUser(user);
+        
+        if (isValid) {
+            showMsg(`Welcome back, <b>${user.displayName}</b>`, "success");
+            roleArea.style.display = "block";
+        }
+    } else {
+        googleBtn.style.display = "block";
+        roleArea.style.display = "none";
     }
-  } else {
-    // No user logged in
-    googleBtn.style.display="block";
-    roleArea.style.display="none";
-  }
 });
 
-/* NAVIGATION HANDLERS */
-studentBtn.onclick = ()=>{
-  location.href="complaints.html";
+studentBtn.onclick = () => {
+    location.href = "complaints.html";
 };
 
-adminBtn.onclick = ()=>{
-  // In a real app, you might check admin status here too
-  // For hackathon, just let valid domain users click it
-  location.href="admin.html";
+adminBtn.onclick = () => {
+    location.href = "admin.html";
 };
 </script>
 

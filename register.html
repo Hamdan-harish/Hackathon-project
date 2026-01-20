@@ -7,7 +7,7 @@
 
     <style>
         :root {
-            /* LIGHT THEME PALETTE */
+            /* Theme variables */
             --bg: #F1F5F9;
             --card: #FFFFFF;
             --border: #E2E8F0;
@@ -35,7 +35,7 @@
             margin: 0 auto;
         }
 
-        /* HEADER */
+        /* Header */
         .header-area {
             text-align: center;
             margin-bottom: 30px;
@@ -54,7 +54,7 @@
             font-size: 15px;
         }
 
-        /* CARD FORM */
+        /* Form Card */
         .card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -75,7 +75,7 @@
             margin-bottom: 8px;
         }
 
-        /* INPUTS */
+        /* Inputs */
         .input-wrapper {
             position: relative;
         }
@@ -110,7 +110,7 @@
             resize: vertical;
         }
 
-        /* 🎤 MICROPHONE BUTTON STYLE */
+        /* Microphone Button */
         .mic-btn {
             background: white;
             border: 1px solid var(--border);
@@ -158,7 +158,7 @@
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
-        /* FILE UPLOAD STYLING */
+        /* File Upload */
         .file-upload-wrapper {
             position: relative;
             background: #F8FAFC;
@@ -190,7 +190,7 @@
             display: block;
         }
 
-        /* PREVIEW */
+        /* Preview Area */
         .preview-box {
             margin-top: 16px;
             display: none;
@@ -207,7 +207,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        /* BUTTONS */
+        /* Submit Button */
         button.submit-btn {
             width: 100%;
             margin-top: 10px;
@@ -228,7 +228,7 @@
             transform: translateY(-1px);
         }
 
-        /* MESSAGES */
+        /* Status Messages */
         #msg {
             margin-top: 16px;
             text-align: center;
@@ -335,7 +335,7 @@
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-    /* 🌐 Firebase Config */
+    // Firebase Config
     const app = initializeApp({
         apiKey: "AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
         authDomain: "my-project-ace79.firebaseapp.com",
@@ -345,24 +345,27 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    /* 🤖 GEMINI AI CONFIG */
-    const GEMINI_API_KEY = "AIzaSyCqW_PNbyy7ry7frwackfJ42krFxolKro8"; 
-
+    // AI API Key
+    // TODO: Insert production key before deployment
+    const GEMINI_API_KEY = "Paste_Your_Api_Key"; 
+    
     const form = document.getElementById("complaintForm");
     const msg = document.getElementById("msg");
     const imgInput = document.getElementById("complaintImage");
     const previewBox = document.getElementById("previewBox");
     const previewImg = document.getElementById("previewImg");
 
-    /* 👁️ Image preview */
-    imgInput.addEventListener("change", e => {
-        const file = e.target.files[0];
-        if (!file) return;
-        previewImg.src = URL.createObjectURL(file);
-        previewBox.style.display = "block";
-    });
+    // Image Preview Logic
+    if(imgInput) {
+        imgInput.addEventListener("change", e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            previewImg.src = URL.createObjectURL(file);
+            previewBox.style.display = "block";
+        });
+    }
 
-    /* ☁️ Cloudinary Upload */
+    // Cloudinary Upload
     async function uploadToCloudinary(file) {
         const cloudName = "dbqhf4icp";
         const uploadPreset = "smartfix";
@@ -371,36 +374,49 @@
         formData.append("upload_preset", uploadPreset);
 
         const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-            method: "POST",
-            body: formData
+            method: "POST", body: formData
         });
-
         const data = await res.json();
         return data.secure_url || null;
     }
 
-    /* 🎤 REUSABLE VOICE RECOGNITION SETUP */
+    // Voice Input Handler
     function setupVoiceInput(btnId, inputId) {
         const btn = document.getElementById(btnId);
         const input = document.getElementById(inputId);
 
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            if (btn) btn.style.display = "none";
+        if (!btn || !input) return;
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            console.warn("Voice input not supported");
+            btn.style.display = "none";
             return;
         }
 
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.lang = 'en-US';
-        recognition.interimResults = false;
+        recognition.interimResults = true; // Show text while speaking
+        recognition.maxAlternatives = 1;
 
-        btn.addEventListener("click", () => {
+        let initialValue = ""; 
+
+        btn.addEventListener("click", (e) => {
+            e.preventDefault(); 
+            e.stopPropagation();
+            
             if (btn.classList.contains("mic-active")) {
                 recognition.stop();
             } else {
                 document.querySelectorAll(".mic-btn").forEach(b => b.classList.remove("mic-active"));
-                recognition.start();
+                
+                initialValue = input.value.trim(); 
+                try {
+                    recognition.start();
+                } catch(err) {
+                    console.log("Mic start error:", err);
+                }
             }
         });
 
@@ -413,45 +429,83 @@
         };
 
         recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            const current = input.value;
-            input.value = current ? current + " " + transcript : transcript;
+            let interimTranscript = '';
+            let finalTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+
+            const speechText = finalTranscript || interimTranscript;
+            const spacer = (initialValue && speechText) ? " " : "";
+            
+            if (speechText) {
+                input.value = initialValue + spacer + speechText;
+            }
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Voice Error:", event.error);
+            btn.classList.remove("mic-active");
+            if(event.error === 'not-allowed') {
+                alert("Please allow microphone access in browser settings.");
+            }
         };
     }
 
-    // Setup Voice for fields
     setupVoiceInput("micName", "name");
     setupVoiceInput("micTitle", "title");
     setupVoiceInput("micLocation", "location");
     setupVoiceInput("micDesc", "desc");
 
 
-    /* 🧠 SMART MODEL SWITCHER (Tries user's requested model first) */
+    // AI Priority Analysis
     async function analyzePriority(title, desc, category) {
         
-        // 🚀 LIST OF MODELS TO TRY (Starting with your request)
         const models = [
-            "gemini-3-flash-preview",  // 1. Your request
-            "gemini-2.0-flash-exp",    // 2. Latest experimental
-            "gemini-1.5-flash",        // 3. Standard stable
-            "gemini-1.5-flash-latest", // 4. Latest alias
-            "gemini-pro"               // 5. Fallback
+            "gemini-3-flash-preview",
+            "gemini-2.0-flash-exp",    
+            "gemini-1.5-flash",       
+            "gemini-pro"              
         ];
 
         const prompt = `
-            Act as a facility manager.
+            Act as a strict Campus Facility Manager. 
             Complaint: ${category} - ${title} - ${desc}
-            Tasks:
-            1. If spam/nonsense, return "Spam".
-            2. Else assign Priority (High/Medium/Low).
+
+            YOUR TASK:
+            Classify the priority based on the logical rules below.
+
+            HIGH PRIORITY (Urgent / Dangerous / Critical)
+            - Immediate safety hazards (sparks, exposed wires, gas smell, fire risk).
+            - Major utility failures (Total power outage in a block, no water supply).
+            - Security risks (Broken main door lock, broken window).
+            - Hygiene disasters (Overflowing sewage, hazardous waste).
+
+            MEDIUM PRIORITY (Disruptive / Functional Failure)
+            - Prevents work/study but is safe (Monitor/Projector broken, Internet/WiFi down).
+            - Discomfort issues (AC/Fan not working, Water cooler empty/broken).
+            - Plumbing issues (Clogged sink, leaking tap, low water pressure).
+            - Elevator stuck (if no one is inside).
+
+            LOW PRIORITY (Cosmetic / Minor Inconvenience)
+            - Aesthetic issues (Peeling paint, dirty floor, cracked tile).
+            - Minor annoyances (Squeaky door, one light bulb flickering, furniture scratch).
+            - Suggestions or non-urgent requests.
+
+            SPAM (Invalid)
+            - Gibberish (e.g., "asdf"), offensive text, or irrelevant topics.
+
+            OUTPUT FORMAT:
             Return ONLY one word: "High", "Medium", "Low", or "Spam".
         `;
 
-        // Loop through models until one works
         for (const model of models) {
-            console.log(`🤖 Trying AI Model: ${model}...`);
             try {
-                // Construct URL dynamically
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
                 
                 const response = await fetch(url, {
@@ -462,37 +516,26 @@
                 if (response.ok) {
                     const data = await response.json();
                     if (data.candidates && data.candidates.length > 0) {
-                        let result = data.candidates[0].content.parts[0].text.trim();
-                        // Success! We found a working model.
-                        console.log(`✅ Success with ${model}`);
-                        
-                        if(result.includes("Spam")) return "Spam";
-                        if(result.includes("High")) return "High";
-                        if(result.includes("Medium")) return "Medium";
-                        if(result.includes("Low")) return "Low";
-                        
-                        return "Medium"; 
+                        return data.candidates[0].content.parts[0].text.trim();
                     }
-                } else {
-                    console.warn(`❌ ${model} failed (${response.status}). Trying next...`);
                 }
             } catch (e) {
-                console.warn(`❌ ${model} network error. Trying next...`);
+                console.warn(`Model check failed: ${model}`);
             }
         }
-        throw new Error("All AI models failed. Please verify API Key & Project permissions.");
+        throw new Error("Unable to connect to AI service.");
     }
 
-    /* 🔐 Auth Check */
+    // Auth Listener
     onAuthStateChanged(auth, user => {
         if (!user) {
             msg.className = "msg error";
-            msg.innerText = "Redirecting to login…";
+            msg.innerText = "Redirecting to login...";
             setTimeout(() => location.href = "login.html", 600);
         }
     });
 
-    /* 📝 Submit Handler */
+    // Form Submission
     form.addEventListener("submit", async e => {
         e.preventDefault();
         const user = auth.currentUser;
@@ -512,30 +555,26 @@
             return msg.innerText = "Please complete all required fields.";
         }
 
-        // Show loading state
         msg.style.display = "block";
         msg.className = "msg";
         msg.style.background = "#EFF6FF";
         msg.style.color = "#3B82F6";
-        msg.innerHTML = "<b>🤖 AI is analyzing severity...</b>";
+        msg.innerHTML = "<b>Analyzing priority...</b>";
 
         try {
-            // 1. Call Smart AI Switcher
             const aiResult = await analyzePriority(titleVal, descVal, categoryVal);
 
-            if (aiResult === "Spam") {
+            if (aiResult.includes("Spam")) {
                 msg.className = "msg error";
-                msg.innerHTML = "⚠️ <b>SPAM DETECTED</b><br>AI rejected this request.";
+                msg.innerHTML = "<b>Spam Detected</b><br>Request rejected.";
                 return;
             }
 
-            // 2. Upload Image
             let imageUrl = null;
             if (imgInput.files[0]) {
                 imageUrl = await uploadToCloudinary(imgInput.files[0]);
             }
 
-            // 3. Save to Firestore
             await addDoc(collection(db, "complaints"), {
                 userId: user.uid,
                 name: nameVal,
@@ -552,9 +591,8 @@
                 voters: {}
             });
 
-            // Success
             msg.className = "msg success";
-            msg.innerText = `Complaint submitted! (AI set priority to ${aiResult})`;
+            msg.innerText = `Submitted! Priority: ${aiResult}`;
             form.reset();
             previewBox.style.display = "none";
 
@@ -564,7 +602,6 @@
             console.error(err);
             msg.className = "msg error";
             msg.innerText = "Error: " + err.message;
-            alert("SYSTEM ERROR:\n" + err.message);
         }
     });
 </script>

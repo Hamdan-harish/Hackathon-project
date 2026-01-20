@@ -1,191 +1,181 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Analytics — SmartCampus Fix</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Analytics — SmartCampus Fix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<style>
-:root {
-  /* LIGHT THEME PALETTE */
-  --bg: #F1F5F9;
-  --panel: #FFFFFF;
-  --card: #FFFFFF;
-  --border: #E2E8F0;
-  
-  --primary: #3B82F6;
-  --text-main: #0F172A;
-  --text-body: #475569;
-  --text-muted: #94A3B8;
-  
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-}
+    <style>
+        :root {
+            --bg: #F1F5F9;
+            --panel: #FFFFFF;
+            --card: #FFFFFF;
+            --border: #E2E8F0;
+            
+            --primary: #3B82F6;
+            --text-main: #0F172A;
+            --text-body: #475569;
+            --text-muted: #94A3B8;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
 
-body {
-  background: var(--bg);
-  color: var(--text-body);
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  line-height: 1.5;
-}
+        body {
+            background: var(--bg);
+            color: var(--text-body);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            line-height: 1.5;
+        }
 
-/* NAVBAR */
-.navbar {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 16px 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-.brand {
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--primary);
-  letter-spacing: -0.5px;
-}
+        .brand {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
 
-.nav-right a {
-  color: var(--text-body);
-  text-decoration: none;
-  margin-left: 20px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
+        .nav-right a {
+            color: var(--text-body);
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
 
-.nav-right a:not(.button):hover { color: var(--primary); }
+        .nav-right a:not(.button):hover { color: var(--primary); }
 
-/* Active State */
-.nav-right a.active {
-  color: var(--primary);
-  background: #EFF6FF;
-  font-weight: 600;
-}
+        .nav-right a.active {
+            color: var(--primary);
+            background: #EFF6FF;
+            font-weight: 600;
+        }
 
-.nav-right .button {
-  background: var(--text-main);
-  color: white !important;
-  padding: 10px 24px;
-  border-radius: 50px;
-}
+        .nav-right .button {
+            background: var(--text-main);
+            color: white !important;
+            padding: 10px 24px;
+            border-radius: 50px;
+        }
 
-/* CONTAINER */
-.container {
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
 
-h2.page-title {
-  color: var(--text-main);
-  font-size: 28px;
-  font-weight: 800;
-  margin-bottom: 8px;
-}
+        h2.page-title {
+            color: var(--text-main);
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
 
-.note-sub {
-  color: var(--text-muted);
-  font-size: 14px;
-  margin-bottom: 32px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+        .note-sub {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-/* GRID LAYOUT */
-.grid-2 {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 24px;
-  margin-bottom: 24px;
-}
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
 
-.card {
-  background: var(--card);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: var(--shadow-card);
-  border: 1px solid transparent;
-  transition: all 0.3s ease;
-}
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
 
-.card-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-main);
-  margin-bottom: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-/* CHART WRAPPER */
-.chart-wrapper {
-  width: 100%;
-  height: 300px;
-  position: relative;
-}
-</style>
+        .chart-wrapper {
+            width: 100%;
+            height: 300px;
+            position: relative;
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="navbar">
-  <div class="brand">SmartCampus Fix</div>
-  <div class="nav-right">
-    <a href="index.html">Home</a>
-    
-    <a id="navComplaints" href="complaints.html">Feed</a>
-    
-    <a id="navAdmin" href="admin.html" style="display:none">Dashboard</a>
-    
-    <a id="navAnalytics" class="active" href="analytics.html" style="display:none">Analytics</a>
-    
-    <a id="navLogin" class="button" href="login.html">Login</a>
-  </div>
+    <div class="brand">SmartCampus Fix</div>
+    <div class="nav-right">
+        <a href="index.html">Home</a>
+        <a id="navComplaints" href="complaints.html">Feed</a>
+        <a id="navAdmin" href="admin.html" style="display:none">Dashboard</a>
+        <a id="navAnalytics" class="active" href="analytics.html" style="display:none">Analytics</a>
+        <a id="navLogin" class="button" href="login.html">Login</a>
+    </div>
 </div>
 
 <div class="container">
-  <h2 class="page-title">Analytics Dashboard</h2>
-  <div class="note-sub" id="infoMsg">
-    <span style="display:inline-block; width:8px; height:8px; background:#10B981; border-radius:50%;"></span>
-    Connecting to live data stream...
-  </div>
+    <h2 class="page-title">Analytics Dashboard</h2>
+    <div class="note-sub" id="infoMsg">
+        <span style="display:inline-block; width:8px; height:8px; background:#10B981; border-radius:50%;"></span>
+        Connecting to live data stream...
+    </div>
 
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Issue Status Overview</div>
-      <div class="chart-wrapper">
-        <canvas id="chartStatus"></canvas>
-      </div>
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">Issue Status Overview</div>
+            <div class="chart-wrapper">
+                <canvas id="chartStatus"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Complaints by Category</div>
+            <div class="chart-wrapper">
+                <canvas id="chartCategory"></canvas>
+            </div>
+        </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Complaints by Category</div>
-      <div class="chart-wrapper">
-        <canvas id="chartCategory"></canvas>
-      </div>
+        <div class="card-title">Priority Distribution</div>
+        <div class="chart-wrapper" style="height:250px;">
+            <canvas id="chartPriority"></canvas>
+        </div>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Priority Distribution</div>
-    <div class="chart-wrapper" style="height:250px;">
-      <canvas id="chartPriority"></canvas>
-    </div>
-  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -195,137 +185,132 @@ h2.page-title {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getFirestore,collection,onSnapshot }
- from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-/* CONFIG */
-const app=initializeApp({
- apiKey:"AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
- authDomain:"my-project-ace79.firebaseapp.com",
- projectId:"my-project-ace79"
-});
-const db=getFirestore(app);
-
-const infoMsg=document.getElementById("infoMsg");
-
-let chartStatusObj=null, chartCategoryObj=null, chartPriorityObj=null;
-
-/* 🔁 Real-time Listener */
-onSnapshot(collection(db,"complaints"), snap=>{
-  let status={submitted:0,"in-progress":0,resolved:0};
-  let category={};
-  let priority={Low:0, Medium:0, High:0}; // Pre-init for sort order
-
-  snap.forEach(d=>{
-    const c=d.data()||{};
-    
-    // Status Count
-    if(c.status) status[c.status]=(status[c.status]||0)+1;
-    
-    // Category Count
-    const cat = c.category || "Uncategorized";
-    category[cat]=(category[cat]||0)+1;
-    
-    // Priority Count
-    const pri = c.priority || "Low";
-    priority[pri]=(priority[pri]||0)+1;
-  });
-
-  renderCharts(status,category,priority);
-  infoMsg.innerHTML = `<span style="display:inline-block; width:8px; height:8px; background:#10B981; border-radius:50%;"></span> Live Data • Last updated just now`;
+const app = initializeApp({
+    apiKey: "AIzaSyBT7No8i0VsEpDH-AJzj5UgAi6czE4ojOY",
+    authDomain: "my-project-ace79.firebaseapp.com",
+    projectId: "my-project-ace79"
 });
 
-/* 🎨 Render Charts */
-function renderCharts(status,category,priority){
+const db = getFirestore(app);
+const infoMsg = document.getElementById("infoMsg");
 
-  // 1. STATUS DATA
-  const stLabels = ["Submitted", "In-Progress", "Resolved"];
-  const stData = [status.submitted||0, status["in-progress"]||0, status.resolved||0];
-  const stColors = ["#94A3B8", "#F59E0B", "#10B981"]; // Gray, Amber, Green
+let chartStatusObj = null;
+let chartCategoryObj = null;
+let chartPriorityObj = null;
 
-  if(!chartStatusObj){
-    chartStatusObj=new Chart(document.getElementById("chartStatus"), {
-      type:"doughnut", // Doughnut for better visual comparison
-      data:{
-        labels: stLabels,
-        datasets:[{
-          data: stData,
-          backgroundColor: stColors,
-          borderWidth: 0
-        }]
-      },
-      options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins: { legend: { position: 'right' } },
-        cutout: '70%'
-      }
+onSnapshot(collection(db, "complaints"), snap => {
+    let status = { submitted: 0, "in-progress": 0, resolved: 0 };
+    let category = {};
+    let priority = { Low: 0, Medium: 0, High: 0 };
+
+    snap.forEach(d => {
+        const c = d.data() || {};
+        
+        if (c.status) status[c.status] = (status[c.status] || 0) + 1;
+        
+        const cat = c.category || "Uncategorized";
+        category[cat] = (category[cat] || 0) + 1;
+        
+        const pri = c.priority || "Low";
+        priority[pri] = (priority[pri] || 0) + 1;
     });
-  } else {
-    chartStatusObj.data.datasets[0].data = stData;
-    chartStatusObj.update();
-  }
 
-  // 2. CATEGORY DATA
-  const cl = Object.keys(category);
-  const cv = Object.values(category);
-  // Cool blue palette for categories
-  const catColors = ["#3B82F6", "#60A5FA", "#93C5FD", "#2563EB", "#1D4ED8", "#DBEAFE"];
+    renderCharts(status, category, priority);
+    infoMsg.innerHTML = `<span style="display:inline-block; width:8px; height:8px; background:#10B981; border-radius:50%;"></span> Live Data • Last updated just now`;
+});
 
-  if(!chartCategoryObj){
-    chartCategoryObj=new Chart(document.getElementById("chartCategory"), {
-      type:"pie",
-      data:{
-        labels:cl,
-        datasets:[{
-          data:cv,
-          backgroundColor: catColors,
-          borderWidth: 2,
-          borderColor: '#ffffff'
-        }]
-      },
-      options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins: { legend: { position: 'right' } }
-      }
-    });
-  } else {
-    chartCategoryObj.data.labels = cl;
-    chartCategoryObj.data.datasets[0].data = cv;
-    chartCategoryObj.update();
-  }
+function renderCharts(status, category, priority) {
+    // Status Chart
+    const stLabels = ["Submitted", "In-Progress", "Resolved"];
+    const stData = [status.submitted || 0, status["in-progress"] || 0, status.resolved || 0];
+    const stColors = ["#94A3B8", "#F59E0B", "#10B981"];
 
-  // 3. PRIORITY DATA
-  // Force order: Low -> Medium -> High
-  const pl = ["Low", "Medium", "High"];
-  const pv = [priority.Low, priority.Medium, priority.High];
-  const priColors = ["#10B981", "#F59E0B", "#EF4444"]; // Green -> Orange -> Red
+    if (!chartStatusObj) {
+        chartStatusObj = new Chart(document.getElementById("chartStatus"), {
+            type: "doughnut",
+            data: {
+                labels: stLabels,
+                datasets: [{
+                    data: stData,
+                    backgroundColor: stColors,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'right' } },
+                cutout: '70%'
+            }
+        });
+    } else {
+        chartStatusObj.data.datasets[0].data = stData;
+        chartStatusObj.update();
+    }
 
-  if(!chartPriorityObj){
-    chartPriorityObj=new Chart(document.getElementById("chartPriority"), {
-      type:"bar",
-      data:{
-        labels: pl,
-        datasets:[{
-          label: "Count",
-          data: pv,
-          backgroundColor: priColors,
-          borderRadius: 8,
-          barThickness: 40
-        }]
-      },
-      options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        scales: { y: { beginAtZero: true, grid: { display:false } }, x: { grid: { display:false } } },
-        plugins: { legend: { display: false } }
-      }
-    });
-  } else {
-    chartPriorityObj.data.datasets[0].data = pv;
-    chartPriorityObj.update();
-  }
+    // Category Chart
+    const cl = Object.keys(category);
+    const cv = Object.values(category);
+    const catColors = ["#3B82F6", "#60A5FA", "#93C5FD", "#2563EB", "#1D4ED8", "#DBEAFE"];
+
+    if (!chartCategoryObj) {
+        chartCategoryObj = new Chart(document.getElementById("chartCategory"), {
+            type: "pie",
+            data: {
+                labels: cl,
+                datasets: [{
+                    data: cv,
+                    backgroundColor: catColors,
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'right' } }
+            }
+        });
+    } else {
+        chartCategoryObj.data.labels = cl;
+        chartCategoryObj.data.datasets[0].data = cv;
+        chartCategoryObj.update();
+    }
+
+    // Priority Chart
+    const pl = ["Low", "Medium", "High"];
+    const pv = [priority.Low, priority.Medium, priority.High];
+    const priColors = ["#10B981", "#F59E0B", "#EF4444"];
+
+    if (!chartPriorityObj) {
+        chartPriorityObj = new Chart(document.getElementById("chartPriority"), {
+            type: "bar",
+            data: {
+                labels: pl,
+                datasets: [{
+                    label: "Count",
+                    data: pv,
+                    backgroundColor: priColors,
+                    borderRadius: 8,
+                    barThickness: 40
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { 
+                    y: { beginAtZero: true, grid: { display: false } }, 
+                    x: { grid: { display: false } } 
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    } else {
+        chartPriorityObj.data.datasets[0].data = pv;
+        chartPriorityObj.update();
+    }
 }
 </script>
 

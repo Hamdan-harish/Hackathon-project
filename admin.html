@@ -6,7 +6,7 @@
 
     <style>
         :root {
-            /* LIGHT THEME PALETTE */
+            /* Theme variables */
             --bg: #F1F5F9;
             --panel: #FFFFFF;
             --card: #FFFFFF;
@@ -44,7 +44,7 @@
             line-height: 1.5;
         }
 
-        /* NAVBAR */
+        /* Navigation */
         .navbar {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
@@ -91,7 +91,7 @@
             border-radius: 50px;
         }
 
-        /* CONTAINER */
+        /* Layout */
         .container {
             max-width: 900px;
             margin: 40px auto;
@@ -105,7 +105,7 @@
             margin-bottom: 24px;
         }
 
-        /* FILTERS */
+        /* Filters section */
         .filters {
             background: var(--panel);
             border: 1px solid var(--border);
@@ -131,7 +131,7 @@
         }
         select:focus { outline: 2px solid var(--primary); border-color: transparent; }
 
-        /* CARD DESIGN */
+        /* Card Component */
         .card {
             background: var(--panel);
             border: 1px solid var(--border);
@@ -141,7 +141,6 @@
             overflow: hidden; 
         }
 
-        /* USER CONTENT AREA */
         .card-body {
             padding: 24px;
         }
@@ -164,8 +163,6 @@
         }
         .chip-cat { background: #EFF6FF; color: var(--primary); }
         .chip-pri { background: #FFF1F2; color: #E11D48; }
-        
-        /* New style for High Priority to stand out */
         .chip-pri-high { background: #991B1B; color: #FFF; }
 
         .card h3 {
@@ -190,7 +187,6 @@
             margin-left: 16px;
         }
 
-        /* SCORE BADGE */
         .score-badge {
             display: inline-flex;
             align-items: center;
@@ -205,7 +201,7 @@
             border: 1px solid #FCD34D;
         }
 
-        /* ADMIN PANEL */
+        /* Admin Controls */
         .admin-panel {
             background: var(--admin-bg);
             border-top: 1px solid var(--border);
@@ -221,7 +217,6 @@
             display: block;
         }
 
-        /* BUTTONS */
         .btn-group {
             display: flex;
             gap: 10px;
@@ -251,7 +246,7 @@
         .btn-del { background: white; color: var(--danger); border: 1px solid #FECACA; margin-left: auto; }
         .btn-del:hover { background: var(--danger-bg); }
 
-        /* NOTES SECTION */
+        /* Notes Area */
         .note-input-area {
             display: flex;
             gap: 10px;
@@ -299,7 +294,6 @@
             content: "📝 ";
         }
 
-        /* Status Badge in Card */
         .status-pill {
             font-size: 12px;
             font-weight: 700;
@@ -382,7 +376,7 @@ const fCat=document.getElementById("filterCategory");
 const fPri=document.getElementById("filterPriority");
 const fSta=document.getElementById("filterStatus");
 
-/* 📌 Load + Sort by SAFETY SCORE (Algorithm) */
+// Load and Filter Complaints
 function loadComplaints(){
  const q=query(collection(db,"complaints"),orderBy("createdAt","desc"));
 
@@ -392,28 +386,25 @@ function loadComplaints(){
   snap.forEach(d=>{
    const c=d.data() || {};
 
-   // Client-side filtering
+   // Filter Logic
    if((fCat.value!=="all" && c.category!==fCat.value) ||
       (fPri.value!=="all" && c.priority!==fPri.value) ||
       (fSta.value!=="all" && c.status!==fSta.value)) return;
 
-   // 🧮 1. CALCULATE BASE SCORE (AI Safety)
+   // Score Calculation (AI + Votes)
    let baseScore = 0;
-   if(c.priority === "High") baseScore = 10;       // Safety Hazard
-   else if(c.priority === "Medium") baseScore = 5; // Functional Issue
-   else baseScore = 2;                             // Low/Cosmetic
+   if(c.priority === "High") baseScore = 10;
+   else if(c.priority === "Medium") baseScore = 5; 
+   else baseScore = 2;
 
-   // 🗳️ 2. CALCULATE VOTES
    const votes = c.votes || {up:0,down:0};
    const voteScore = votes.up - votes.down;
-
-   // 🏆 3. FINAL TOTAL SCORE
    const finalScore = baseScore + voteScore;
 
    docs.push({id:d.id, data:c, votes, score: finalScore});
   });
 
-  // Sort by Final Score (High to Low)
+  // Sort by Priority Score
   docs.sort((a,b)=> b.score - a.score);
 
   list.innerHTML="";
@@ -435,7 +426,6 @@ function loadComplaints(){
      ? `<img src="${c.image}" class="complaint-img">`
      : "";
    
-   // Visual styles
    let statusClass = "st-sub";
    if(c.status==='in-progress') statusClass = "st-inp";
    if(c.status==='resolved') statusClass = "st-res";
@@ -509,12 +499,12 @@ function loadComplaints(){
 fCat.onchange=fPri.onchange=fSta.onchange=loadComplaints;
 loadComplaints();
 
-/* 🟢 Update Status */
+// Status Update Handler
 window.updateStatus = async(id,status)=>{
  await updateDoc(doc(db,"complaints",id),{status});
 };
 
-/* 📝 Add Note */
+// Add Note Handler
 window.addNote = async(id)=>{
  const box=document.getElementById(`note_${id}`);
  const text=box.value.trim(); if(!text) return;
@@ -528,7 +518,7 @@ window.addNote = async(id)=>{
  box.value="";
 };
 
-/* 🗑 ADMIN DELETE */
+// Delete Handler
 window.deleteComplaint = async(id)=>{
  if(!confirm("Are you sure? This will permanently delete the record.")) return;
  await deleteDoc(doc(db,"complaints",id));
