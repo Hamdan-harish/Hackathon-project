@@ -18,6 +18,8 @@ const navComplaints = document.getElementById("navComplaints");
 const navAdmin = document.getElementById("navAdmin");
 const navAnalytics = document.getElementById("navAnalytics");
 
+const ADMIN_DOMAIN = "iiitkottayam.ac.in";
+
 function highlightActiveNav() {
     const file = location.pathname.split("/").pop() || "index.html";
 
@@ -53,8 +55,19 @@ function setLoggedOutUI() {
 
 async function setLoggedInUI(user) {
     const demoAdmin = sessionStorage.getItem("demoAdmin") === "true";
+    const sessionRole = sessionStorage.getItem("sessionRole");
 
-    if (demoAdmin) {
+    let isRealAdmin = false;
+    
+    if (user.email && user.email.endsWith(ADMIN_DOMAIN)) {
+        if (sessionRole === "student") {
+            isRealAdmin = false;
+        } else {
+            isRealAdmin = true;
+        }
+    } 
+
+    if (demoAdmin || isRealAdmin) {
         if (navComplaints) {
             navComplaints.href = "admin.html";
             navComplaints.onclick = null;
@@ -73,11 +86,12 @@ async function setLoggedInUI(user) {
         }
 
         if (navLogin) {
-            navLogin.textContent = "Exit Demo";
+            navLogin.textContent = demoAdmin ? "Exit Demo" : "Logout";
             navLogin.href = "#";
             navLogin.onclick = e => {
                 e.preventDefault();
                 sessionStorage.removeItem("demoAdmin");
+                sessionStorage.removeItem("sessionRole");
                 signOut(auth).then(() => location.href = "index.html");
             };
         }
@@ -91,40 +105,9 @@ async function setLoggedInUI(user) {
         navLogin.href = "#";
         navLogin.onclick = e => {
             e.preventDefault();
+            sessionStorage.removeItem("sessionRole");
             signOut(auth).then(() => location.href = "index.html");
         };
-    }
-
-    let role = "student";
-    try {
-        const snap = await getDoc(doc(db, "users", user.uid));
-        if (snap.exists()) {
-            role = snap.data().role;
-        }
-    } catch (error) {
-        console.error(error);
-    }
-
-    if (role === "admin") {
-        if (navComplaints) {
-            navComplaints.href = "admin.html";
-            navComplaints.onclick = null;
-        }
-
-        if (navAdmin) {
-            navAdmin.style.display = "inline-block";
-            navAdmin.href = "admin.html";
-            navAdmin.onclick = null;
-        }
-
-        if (navAnalytics) {
-            navAnalytics.style.display = "inline-block";
-            navAnalytics.href = "analytics.html";
-            navAnalytics.onclick = null;
-        }
-
-        highlightActiveNav();
-        return;
     }
 
     if (navComplaints) {

@@ -6,7 +6,6 @@
 
     <style>
         :root {
-            /* Theme Variables */
             --bg: #F8FAFC;
             --card: #FFFFFF;
             --border: #E2E8F0;
@@ -63,7 +62,6 @@
             line-height: 1.5;
         }
 
-        /* Buttons */
         button {
             font-family: 'Inter', sans-serif;
             font-weight: 600;
@@ -93,7 +91,6 @@
             transform: none;
         }
 
-        /* Role Selection */
         .role-area {
             margin-top: 24px;
             border-top: 1px solid var(--border);
@@ -128,7 +125,6 @@
         }
         .btn-admin:hover { background: #334155; }
 
-        /* Status Messages */
         .msgBox {
             margin-top: 20px;
             padding: 12px;
@@ -219,7 +215,6 @@ function showMsg(text, type) {
     msg.innerHTML = text;
 }
 
-// Validate email domain policy
 async function validateUser(user) {
     if (!user.email) return false;
     
@@ -238,7 +233,6 @@ async function validateUser(user) {
     return true;
 }
 
-// Handle Login
 googleBtn.onclick = async () => {
     showMsg("Opening Google sign-in...", "success");
     googleBtn.disabled = true;
@@ -250,7 +244,6 @@ googleBtn.onclick = async () => {
         const isValid = await validateUser(user);
         if (!isValid) return;
 
-        // Update user record
         await setDoc(doc(db, "users", user.uid), {
             name: user.displayName || "", 
             email: user.email, 
@@ -268,7 +261,6 @@ googleBtn.onclick = async () => {
     }
 };
 
-// Check auth state on page load
 onAuthStateChanged(auth, async user => {
     if (user) {
         googleBtn.style.display = "none"; 
@@ -286,10 +278,12 @@ onAuthStateChanged(auth, async user => {
 });
 
 studentBtn.onclick = () => {
+    sessionStorage.setItem('sessionRole', 'student');
     location.href = "complaints.html";
 };
 
 adminBtn.onclick = () => {
+    sessionStorage.setItem('sessionRole', 'admin');
     location.href = "admin.html";
 };
 </script>
